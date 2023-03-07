@@ -37,6 +37,7 @@ COPY --from=builder /app /app
 # Set the working directory for subsequent commands
 WORKDIR /app
 
+RUN pip install flask
 # Run the application
 CMD ["python", "-m", "app.py", "run"]
 
