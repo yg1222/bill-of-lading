@@ -61,8 +61,8 @@ def form():
                            pickup_location=pickup_location,pickup_time=pickup_time,delivery_location=delivery_location,delivery_time=delivery_time,comments=comments,
                            reminders=reminders)
     
-    pdfkit.configuration(wkhtmltopdf='/usr/local/bin/wkhtmltopdf')
-    
+    #pdfkit.configuration(wkhtmltopdf='/usr/local/bin/wkhtmltopdf')
+
     bol_pdf = pdfkit.from_string(bol_html, False)
     pdf_response = make_response(bol_pdf)
     pdf_response.headers['Content-Type'] = 'application/pdf'
