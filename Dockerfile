@@ -13,8 +13,13 @@ RUN apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 
+# Download wkhtmltopdf binary
+RUN wget -q https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.6/wkhtmltox-0.12.6_linux-generic-amd64.tar.xz
 
-
+# Extract and move wkhtmltopdf binary to /usr/local/bin
+RUN tar xf wkhtmltox-0.12.6_linux-generic-amd64.tar.xz && \
+    mv wkhtmltox/bin/wkhtmltopdf /usr/local/bin && \
+    rm -rf wkhtmltox
 
 
 
