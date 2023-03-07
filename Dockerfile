@@ -37,7 +37,7 @@ COPY --from=builder /app /app
 WORKDIR /app
 
 # Run the application
-CMD ["flask", "run"]
+CMD ["python", "-m", "flask", "run"]
 
 
 
