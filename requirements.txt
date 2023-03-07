@@ -20,3 +20,4 @@ webencodings==0.5.1
 Werkzeug==2.2.3
 zopfli==0.2.2
 gunicorn==20.1.0
+gir1.2-glib-2.0
