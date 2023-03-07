@@ -15,7 +15,7 @@ WORKDIR /app
 RUN pip install --upgrade pip && pip install -r requirements.txt
 
 # Build the application
-RUN python setup.py build
+#RUN python setup.py build
 
 # Second stage of the Dockerfile
 FROM python:3.8-slim-buster
