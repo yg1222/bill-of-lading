@@ -41,6 +41,7 @@ WORKDIR /app
 
 RUN pip install flask
 RUN pip install pdfkit
+RUN apt install -y wkhtmltopdf
 
 # Run the application
 #CMD [ "python", "-m", "flask", "run", "--host=0.0.0.0", "--port=5000"]
