@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body style="max-width: 800px; margin: 0 auto; padding: 1rem 1rem 1rem 1rem;">
+  
+  <div style="padding-top: 1rem;">
+    
+    <table style="table-layout: fixed; width: 100%;">
+      <tr>
+        <td style="width: 50%; ">{{your_company_name}} <br>
+          {{your_company_address}}<br>
+          Ph no. {{your_company_phone}}
+        </td>
+        <td style="width: 50%; text-align: right;">
+          <div class="logo">
+            <img
+              src="{{logo_url}}"
+              style="max-width: 50%;" alt="">
+          </div>
+        </td>
+      </tr>
+    </table>
+    <hr>
+    <b>Dispatcher:</b> {{dispatcher_name}}<br>
+    <b>Phone:</b> {{dispatcher_phone}}<br>
+    <b>Email:</b> {{dispatcher_email}}<br>
+
+    <hr>
+   
+    <table style="table-layout: fixed; width: 100%;">
+      <tr>
+        <td style="width: 33.33%; text-align: center;">Carrier Confirmation</td>
+        <td style="width: 33.33%; text-align: center;"><b>Date:</b> <br>{{run_date}}</td>
+        <td style="width: 33.33%; text-align: center;"><b>Dock #</b> <br>{{dock}}</td>
+      </tr>
+    </table>
+    <hr>
+    
+    <table style="table-layout: fixed; width: 100%;">
+      <tr>
+        <td style="width: 50%;"><b>To: </b> {{to_company}} <BR>
+          <b>Bill To:</b> {{bill_to}}
+        </td>
+        <td style="width: 50%; text-align: right;">
+          Quantity: {{quantity}} <br>
+          Weight: {{weight}}<br>
+          Rate: {{rate}}</td>
+      </tr>
+    </table>
+    <hr>
+    <p> Equipment Specifications: **{{equipment_details}}.</p>
+    <hr>
+
+
+    <table style="table-layout: fixed; width: 100%;">
+      <tr>
+        <th style="width: 50%; text-align: left;">Pickup</th>
+        <th style="width: 50%; text-align: left;">Delivery</th>
+      </tr>
+
+      <tr>
+        <td style="width: 50%;">Location: <address>{{pickup_location}}</address> <BR> Time: <time><b>{{pickup_time}}</b></time>
+        </td>
+
+        <td style="width: 50%;">Location: <address>{{delivery_location}}</address> <BR> Time:
+          <time><b>{{delivery_time}}</b></time></td>
+      </tr>
+    </table>
+
+    <hr>
+    <div>
+      <br>
+      Carrier's Authorized Signature: _______________<br>
+      Date:
+    </div>
+    <br>
+    <div>
+      {{comments}}
+      </p>
+      <ul>
+        {% for r in reminders %}
+        <li>{{r}} </li>
+        {% endfor %}
+      </ul>
+
+    </div>
+
+
+  </div>
+</body>
+
+</html>

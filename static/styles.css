@@ -1,0 +1,85 @@
+body{
+  background-color: #1d2534;
+}
+.main_div {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: #47597e;
+  color: white;
+  padding: 20px;
+  border-radius: 10px;
+  width: 50%;
+  margin: auto;
+  font-family: Arial, sans-serif;
+}
+
+.tab {
+  overflow: hidden;
+  border: 1px solid #ccc;
+  background-color: #c8c5c5;
+  margin-bottom: 20px;
+  }
+  
+  .tab button {
+  background-color: inherit;
+  float: left;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 14px 16px;
+  transition: 0.3s;
+  font-size: 17px;
+  margin-right: 10px;
+  }
+  
+  .tab button:hover {
+  background-color: #ddd;
+  }
+  
+  .tab button.active {
+  background-color: #ccc;
+  }
+  
+  .tabcontent {
+  display: none;
+  padding: 6px 12px;
+  border-top: none;
+  }
+  
+  .tabcontent:first-child {
+  display: block;
+  }
+  
+  input[type="text"] {
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  box-sizing: border-box;
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  background-color: #f8f8f8;
+  font-size: 16px;
+  resize: none;
+  }
+  
+  input[type="submit"] {
+  background-color: #91af4c;
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 20px;
+  font-size: 16px;
+  }
+  
+  input[type="submit"]:hover {
+  background-color: #868d86;
+
+  }
+
+  .complete{
+    text-align: center;
+  }

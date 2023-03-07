@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link rel="stylesheet" href="static\styles.css">
+    <script defer src="static\form.js"></script> 
+    <meta charset="UTF-8">
+    <!-- <meta http-equiv="X-UA-Compatible" content="IE=edge"> -->
+    <!-- <meta http-equiv="Content-Type" content="application/javascript"> -->
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BOL Generator</title>
+</head>
+
+<body>
+    <br>
+    <div class="main_div">
+        <div class="tab">
+            <button class="tablinks active" onclick="openTab(event, 'company')">Company Information</button>
+            <button class="tablinks" onclick="openTab(event, 'dispatcher')">Dispatcher Information</button>
+            <button class="tablinks" onclick="openTab(event, 'run')">Run Information</button>
+            <button class="tablinks" onclick="openTab(event, 'equipment')">Equipment Information</button>
+            <button class="tablinks" onclick="openTab(event, 'reminder')">Reminder Information</button>
+            <button class="tablinks gen_btn" onclick="openTab(event, 'complete')">Complete</button>
+        </div>
+
+        <form action="/form" method="post">
+            <div id="company" class="tabcontent active">
+                <label for="your_company_name">You Company Name:</label>
+                <input type="text" id="input1" name="your_company_name"><br>
+
+                <label for="input2">Your Company Address:</label>
+                <input type="text" id="input2" name="your_company_address"><br>
+
+                <label for="your_company_name">You Company Phone number:</label>
+                <input type="text" id="input1" name="your_company_phone"><br>
+
+                <label for="input11">Logo url:</label>
+                <input type="text" id="input11" name="logo_url"><br>
+            </div>
+
+            <div id="dispatcher" class="tabcontent active">
+                <label for="input3">Dispatcher's Name:</label>
+                <input type="text" id="input3" name="dispatcher_name"><br>
+
+                <label for="input3">Dispatcher's eMail:</label>
+                <input type="text" id="input3" name="dispatcher_email"><br>
+
+                <label for="input3">Dispatcher's Phone#:</label>
+                <input type="text" id="input3" name="dispatcher_phone"><br>
+            </div>
+
+            <div id="run" class="tabcontent active">
+                <label for="input4">Run Date:</label>
+                <input type="text" id="input4" name="run_date"><br>
+
+                <label for="input5">Dock #:</label>
+                <input type="text" id="input5" name="dock"><br>
+
+                <label for="input6">Carrier</label>
+                <input type="text" id="input6" name="to_company"><br>
+
+                <label for="input7">Bill To:</label>
+                <input type="text" id="input7" name="bill_to"><br>
+
+                <label for="input7">Quantity:</label>
+                <input type="text" id="input7" name="quantity"><br>
+
+                <label for="input7">Weight:</label>
+                <input type="text" id="input7" name="weight"><br>
+
+                <label for="input7">Rate:</label>
+                <input type="text" id="input7" name="rate"><br>
+            </div>
+
+            <div id="equipment" class="tabcontent active">
+                <label for="input7">Equipment Details:</label>
+                <input type="text" name="equipment_details"><br>
+
+                <label for="input8">Pickup Location:</label>
+                <input type="text" id="input8" name="pickup_location"><br>
+
+                <label for="input8">Pickup Time:</label>
+                <input type="text" name="pickup_time"><br>
+
+                <label for="input9">Delivery Location:</label>
+                <input type="text" id="input9" name="delivery_location"><br>
+
+                <label for="input9">Delivery Time:</label>
+                <input type="text" name="delivery_time"><br>
+            </div>
+
+            <div id="reminder" class="tabcontent active">
+                <label for="input10">Comments:</label>
+                <input type="text" id="input10" name="comments"><br>
+
+                <label for="input10">Reminder 1:</label>
+                <input type="text" id="input10" name="reminder1"><br>
+
+                <label for="input10">Reminder 2:</label>
+                <input type="text" id="input10" name="reminder2"><br>
+
+                <label for="input10">Reminder 3:</label>
+                <input type="text" id="input10" name="reminder3"><br>
+
+                <label for="input10">Reminder 4:</label>
+                <input type="text" id="input10" name="reminder4"><br>
+            </div>
+
+            <div id="complete" class="tabcontent active complete">
+                <div>
+                    <div>
+                        Reminder: Fill in all the necessary details in the previous tabs before submitting.
+                    </div>
+                    <input type="submit" value="Submit" formtarget="_blank">
+                </div>
+            </div>            
+        </form>
+    </div>
+
+    
+</body>
+
+</html>
