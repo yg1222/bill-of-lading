@@ -1,10 +1,10 @@
 Brotli==1.0.9
 cffi==1.15.1
 click==8.1.3
+colorama==0.4.6
 cssselect2==0.7.0
 Flask==2.2.3
 fonttools==4.39.0
-gunicorn==20.1.0
 html5lib==1.1
 itsdangerous==2.1.2
 Jinja2==3.1.2
@@ -15,8 +15,8 @@ pydyf==0.5.0
 pyphen==0.13.2
 six==1.16.0
 tinycss2==1.2.1
-weasyprint==58.0
+weasyprint==58.1
 webencodings==0.5.1
 Werkzeug==2.2.3
 zopfli==0.2.2
-pygobject
+libgirepository1.0-dev
