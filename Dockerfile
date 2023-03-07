@@ -38,6 +38,8 @@ COPY --from=builder /app /app
 WORKDIR /app
 
 RUN pip install flask
+RUN pip install pdfkit
+
 # Run the application
 CMD ["python", "-m", "app.py", "run"]
 
