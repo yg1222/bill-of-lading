@@ -22,6 +22,7 @@ WORKDIR /app
 COPY . .
 RUN ls -al
 
+RUN pip list
 
 # Build the application
 #RUN python setup.py build
