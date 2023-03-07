@@ -15,13 +15,8 @@ RUN apt-get install -y \
 
 
 
-# Move wkhtmltopdf binary to /app/bin directory
-#RUN mkdir -p /app/bin && \
-    mv /usr/local/bin/wkhtmltopdf /app/bin/ && \
-    chmod +x /app/bin/wkhtmltopdf
 
-# Set PATH environment variable to include /app/bin directory
-ENV PATH="/app/bin:${PATH}"
+
 
 
 # Copy the source code into the container
@@ -60,7 +55,7 @@ WORKDIR /app
 
 RUN pip install flask
 RUN pip install pdfkit
-RUN chmod +x /*
+RUN chmod +x /
 
 # Run the application
 #CMD [ "python", "-m", "flask", "run", "--host=0.0.0.0", "--port=5000"]
