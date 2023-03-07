@@ -41,7 +41,7 @@ RUN pip install flask
 RUN pip install pdfkit
 
 # Run the application
-CMD ["flask", "run", "--host=0.0.0.0"]
+CMD [ "python", "-m", "flask", "run", "--host=0.0.0.0", "--port=5000"]
 
 
 
