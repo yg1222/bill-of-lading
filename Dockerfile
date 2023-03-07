@@ -41,7 +41,7 @@ RUN pip install flask
 RUN pip install pdfkit
 
 # Run the application
-CMD ["python", "-m", "app.py", "run"]
+CMD ["python", "-m", "flask", "run"]
 
 
 
