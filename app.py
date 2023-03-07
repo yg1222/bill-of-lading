@@ -2,7 +2,7 @@
 
 from flask import Flask, render_template, redirect, request, make_response
 import pdfkit
-
+pdfkit_config = pdfkit.configuration(wkhtmltopdf='/app/.apt/usr/local/bin/wkhtmltopdf')
 
 app = Flask(__name__)
 
