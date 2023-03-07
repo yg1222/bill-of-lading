@@ -25,7 +25,7 @@ RUN ls -al
 
 RUN pip list
 
-RUN ls usr/local/bin
+RUN ls usr/local
 
 # Build the application
 #RUN python setup.py build
