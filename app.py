@@ -1,7 +1,8 @@
 # Maybe a weather app that prints a joke on screen related to the weather
 
 from flask import Flask, render_template, redirect, request, make_response
-from weasyprint import HTML
+import pdfkit
+
 
 app = Flask(__name__)
 
@@ -60,7 +61,9 @@ def form():
                            pickup_location=pickup_location,pickup_time=pickup_time,delivery_location=delivery_location,delivery_time=delivery_time,comments=comments,
                            reminders=reminders)
     
-    bol_pdf = HTML(string=bol_html).write_pdf()
+    pdfkit.configuration(wkhtmltopdf='/usr/local/bin/wkhtmltopdf')
+    
+    bol_pdf = pdfkit.from_string(bol_html, False)
     pdf_response = make_response(bol_pdf)
     pdf_response.headers['Content-Type'] = 'application/pdf'
     pdf_response.headers['Content-Disposition'] = 'inline; filename=bill_of_lading.pdf'
