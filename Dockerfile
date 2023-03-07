@@ -14,6 +14,9 @@ WORKDIR /app
 # Install dependencies required for building the application
 RUN pip install --upgrade pip && pip install -r requirements.txt
 
+# Explicitly setting path for flask
+ENV PATH=/usr/local/bin:$PATH
+
 # Build the application
 #RUN python setup.py build
 
