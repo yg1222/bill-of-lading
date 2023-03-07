@@ -3,26 +3,6 @@ FROM python:3.8-slim-buster AS builder
 
 # Install build dependencies
 RUN apt-get update && apt-get install -y build-essential
-RUN apt-get install -y wkhtmltopdf
-
-# Install wkhtmltopdf dependencies
-RUN apt-get install -y \
-    libfontconfig1 \
-    libxrender1 \
-    wget \
-    && rm -rf /var/lib/apt/lists/*
-
-
-# Download wkhtmltopdf binary
-RUN wget -q https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.6/wkhtmltox-0.12.6_linux-generic-amd64.tar.xz
-
-# Extract and move wkhtmltopdf binary to /usr/local/bin
-RUN tar xf wkhtmltox-0.12.6_linux-generic-amd64.tar.xz && \
-    mv wkhtmltox/bin/wkhtmltopdf /usr/local/bin && \
-    rm -rf wkhtmltox
-
-
-
 
 # Copy the source code into the container
 COPY . /app
@@ -59,8 +39,6 @@ COPY --from=builder /app /app
 WORKDIR /app
 
 RUN pip install flask
-RUN pip install pdfkit
-RUN chmod +x /
 
 # Run the application
 #CMD [ "python", "-m", "flask", "run", "--host=0.0.0.0", "--port=5000"]

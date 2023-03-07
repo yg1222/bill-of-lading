@@ -1,8 +1,10 @@
 # Maybe a weather app that prints a joke on screen related to the weather
 
-from flask import Flask, render_template, redirect, request, make_response
-import pdfkit
+from flask import Flask, render_template, redirect, request, make_response, send_file
+from xhtml2pdf import pisa
+import io
 #pdfkit.configuration(wkhtmltopdf='usr/local/lib/python3.8/site-packages/wkhtmltopdf')
+
 
 app = Flask(__name__)
 
@@ -63,12 +65,15 @@ def form():
     
     #pdfkit.configuration(wkhtmltopdf='/usr/local/bin/wkhtmltopdf')
 
-    bol_pdf = pdfkit.from_string(bol_html, False)
-    pdf_response = make_response(bol_pdf)
-    pdf_response.headers['Content-Type'] = 'application/pdf'
-    pdf_response.headers['Content-Disposition'] = 'inline; filename=bill_of_lading.pdf'
+    bol_pdf = io.BytesIO()
+    #pdf_response = make_response(bol_pdf)
+    pisa.CreatePDF(bol_html, dest=bol_pdf)
+    bol_pdf.seek(0)
+    # pdf_response.headers['Content-Type'] = 'application/pdf'
+    # pdf_response.headers['Content-Disposition'] = 'inline; filename=bill_of_lading.pdf'
 
-    return pdf_response
+    return send_file(bol_pdf, as_attachment=True, download_name='bill_of_lading.pdf')
+    #return pdf_response
     #return bol_html
 
 
