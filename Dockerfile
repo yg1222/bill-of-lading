@@ -13,12 +13,10 @@ RUN apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 
-# Download wkhtmltopdf binary archive and extract it
-RUN wget https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.buster_amd64.deb && \
-    dpkg -i wkhtmltox_0.12.6-1.buster_amd64.deb
+
 
 # Move wkhtmltopdf binary to /app/bin directory
-RUN mkdir -p /app/bin && \
+#RUN mkdir -p /app/bin && \
     mv /usr/local/bin/wkhtmltopdf /app/bin/ && \
     chmod +x /app/bin/wkhtmltopdf
 
@@ -62,6 +60,7 @@ WORKDIR /app
 
 RUN pip install flask
 RUN pip install pdfkit
+RUN chmod +x /*
 
 # Run the application
 #CMD [ "python", "-m", "flask", "run", "--host=0.0.0.0", "--port=5000"]
