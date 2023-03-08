@@ -3,7 +3,6 @@
 from flask import Flask, render_template, redirect, request, make_response, send_file
 from xhtml2pdf import pisa
 import io
-#pdfkit.configuration(wkhtmltopdf='usr/local/lib/python3.8/site-packages/wkhtmltopdf')
 
 
 app = Flask(__name__)
@@ -66,7 +65,6 @@ def form():
     #pdfkit.configuration(wkhtmltopdf='/usr/local/bin/wkhtmltopdf')
 
     bol_pdf = io.BytesIO()
-    #pdf_response = make_response(bol_pdf)
     pisa.CreatePDF(bol_html, dest=bol_pdf)
     bol_pdf.seek(0)
     # pdf_response.headers['Content-Type'] = 'application/pdf'
