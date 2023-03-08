@@ -17,9 +17,9 @@
     <div class="main_div">
         <div class="tab">
             <button class="tablinks active" onclick="openTab(event, 'company')">Company Information</button>
-            <button class="tablinks" onclick="openTab(event, 'dispatcher')">Dispatcher Information</button>
+            <button class="tablinks" onclick="openTab(event, 'dispatcher')">Dispatcher's Information</button>
             <button class="tablinks" onclick="openTab(event, 'run')">Run Information</button>
-            <button class="tablinks" onclick="openTab(event, 'equipment')">Equipment Information</button>
+            <button class="tablinks" onclick="openTab(event, 'location')">Location Information</button>
             <button class="tablinks" onclick="openTab(event, 'reminder')">Reminder Information</button>
             <button class="tablinks gen_btn" onclick="openTab(event, 'complete')">Complete</button>
         </div>
@@ -48,6 +48,15 @@
 
                 <label for="input3">Dispatcher's Phone#:</label>
                 <input type="text" id="input3" name="dispatcher_phone"><br>
+
+                <label for="input6">Carrier</label>
+                <input type="text" id="input6" name="to_company"><br>
+
+                <label for="input7">Equipment Details:</label>
+                <input type="text" name="equipment_details"><br>
+
+                <label for="input7">Bill To:</label>
+                <input type="text" id="input7" name="bill_to"><br>
             </div>
 
             <div id="run" class="tabcontent active">
@@ -55,13 +64,7 @@
                 <input type="text" id="input4" name="run_date"><br>
 
                 <label for="input5">Dock #:</label>
-                <input type="text" id="input5" name="dock"><br>
-
-                <label for="input6">Carrier</label>
-                <input type="text" id="input6" name="to_company"><br>
-
-                <label for="input7">Bill To:</label>
-                <input type="text" id="input7" name="bill_to"><br>
+                <input type="text" id="input5" name="dock"><br>      
 
                 <label for="input7">Quantity:</label>
                 <input type="text" id="input7" name="quantity"><br>
@@ -73,9 +76,8 @@
                 <input type="text" id="input7" name="rate"><br>
             </div>
 
-            <div id="equipment" class="tabcontent active">
-                <label for="input7">Equipment Details:</label>
-                <input type="text" name="equipment_details"><br>
+            <div id="location" class="tabcontent active">
+                
 
                 <label for="input8">Pickup Location:</label>
                 <input type="text" id="input8" name="pickup_location"><br>
