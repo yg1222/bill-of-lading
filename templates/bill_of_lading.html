@@ -21,8 +21,8 @@
         <td style="width: 50%; text-align: right;">
           <div class="logo">
             <img
-              src="{{logo_url}}"
-              style="max-width: 50%;" alt="">
+              src="{{logo_path}}"
+              style="max-width: 40%;" alt="">
           </div>
         </td>
       </tr>
@@ -55,7 +55,7 @@
       </tr>
     </table>
     <hr>
-    <p> Equipment Specifications: **{{equipment_details}}.</p>
+    <p> Equipment Specifications: {{equipment_details}}.</p>
     <hr>
 
 
@@ -64,14 +64,27 @@
         <th style="width: 50%; text-align: left;">Pickup</th>
         <th style="width: 50%; text-align: left;">Delivery</th>
       </tr>
-
+    
+      <!-- Dynamic row inserts and handle completely blank rows -->
+      {% for x in pickup_delivery_details %}   
+      {% if not ( x[0].pu_address == "" and  x[0].pu_time =="" and x[1].del_address == "" and  x[1].del_time =="") %} 
       <tr>
-        <td style="width: 50%;">Location: <address>{{pickup_location}}</address> Time: <time><b>{{pickup_time}}</b></time>
+        <td style="width: 50%;">    
+          Location: {{x[0].pu_address}}
+          <br>
+          Time: <b><time>{{x[0].pu_time}}</time></b>
+          <br><br>
         </td>
-
-        <td style="width: 50%;">Location: <address>{{delivery_location}}</address> Time:
-          <time><b>{{delivery_time}}</b></time></td>
+        <td style="width: 50%;">
+          Location: {{x[1].del_address}}
+          <br>
+          Time: <b><time>{{x[1].del_time}}</time></b>
+          <br><br>    
+        </td>
       </tr>
+      {% endif %}
+      {% endfor %}
+
     </table>
 
     <hr>
@@ -80,10 +93,9 @@
       Date:
     </div>
     <div>
-      {{comments}}
-      </p>
+      <p>Comments:</p>
       <ul>
-        {% for r in reminders %}
+        {% for r in comments %}
         <li>{{r}} </li>
         {% endfor %}
       </ul>
