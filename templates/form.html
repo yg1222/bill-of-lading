@@ -26,52 +26,52 @@
 
         <form action="/form" method="post" enctype="multipart/form-data">
             <div id="company" class="tabcontent active">
-                <label for="your_company_name">You Company Name:</label>
-                <input type="text" id="input1" name="your_company_name"><br>
+                <label for="your_company_name">You Company Name:</label><br>
+                <input type="text" class="company_info" id="input1" name="your_company_name"><br>
 
-                <label for="input2">Your Company Address:</label>
-                <input type="text" id="input2" name="your_company_address"><br>
+                <label for="input2">Your Company Address:</label><br>
+                <input type="text" class="company_info" id="input2" name="your_company_address"><br>
 
-                <label for="your_company_name">You Company Phone number:</label>
-                <input type="text" id="input1" name="your_company_phone"><br>
+                <label for="your_company_name">You Company Phone number:</label><br>
+                <input type="text" class="company_info" id="input1" name="your_company_phone"><br>
 
-                <label for="logo">Logo:</label>
-                <input type="file" id="logo" name="logo"><br>
+                <label for="logo">Logo:</label><br>
+                <input type="file" class="company_info" id="logo" name="logo"><br>
             </div>
 
             <div id="dispatcher" class="tabcontent active">
-                <label for="dispatcher_name">Dispatcher's Name:</label>
+                <label for="dispatcher_name">Dispatcher's Name:</label><br>
                 <input type="text" id="dispatcher_name" name="dispatcher_name"><br>
 
-                <label for="dispatcher_email">Dispatcher's eMail:</label>
+                <label for="dispatcher_email">Dispatcher's eMail:</label><br>
                 <input type="email" id="input3" name="dispatcher_email"><br><br>
 
-                <label for="dispatcher_phone">Dispatcher's Phone#:</label>
+                <label for="dispatcher_phone">Dispatcher's Phone#:</label><br>
                 <input type="phone" id="dispatcher_phone" name="dispatcher_phone"><br><br>
 
-                <label for="to_company">Carrier</label>
+                <label for="to_company">Carrier</label><br>
                 <input type="text" id="to_company" name="to_company"><br>
 
-                <label for="equipment_details">Equipment Details:</label>
+                <label for="equipment_details">Equipment Details:</label><br>
                 <input type="text" name="equipment_details"><br>
 
-                <label for="bill_to">Bill To:</label>
+                <label for="bill_to">Bill To:</label><br>
                 <input type="text" id="input7" name="bill_to"><br>
             </div>
 
             <div id="run" class="tabcontent active">
                 
 
-                <label for="dock">Dock #:</label>
+                <label for="dock">Dock #:</label><br>
                 <input type="text" id="input5" name="dock"><br>      
 
-                <label for="quantity">Quantity:</label>
+                <label for="quantity">Quantity:</label><br>
                 <input type="text" id="input7" name="quantity"><br>
 
-                <label for="weight">Weight:</label>
+                <label for="weight">Weight:</label><br>
                 <input type="text" id="input7" name="weight"><br>
 
-                <label for="rate">Rate:</label>
+                <label for="rate">Rate:</label><br>
                 <input type="text" id="input7" name="rate"><br>
             </div>
 
@@ -89,13 +89,13 @@
                         </tr>
                         <td>
                             
-                            <input type="text" id="pickup_location" class="address" name="pickup_location"> 
+                            <input type="text" id="pickup_location" class="address" name="pickup_location"> <br>
                             <label for="pickup_time">Time:</label>
                             <input type="time" name="pickup_time"><br>
                         </td>
                         <td>
                             
-                            <input type="text" id="delivery_location" class="address" name="delivery_location">
+                            <input type="text" id="delivery_location" class="address" name="delivery_location"><br>
                             <label for="delivery_time">Time:</label>
                             <input type="time" name="delivery_time"><br>
                         </td>
@@ -108,7 +108,7 @@
 
             <div id="reminder" class="tabcontent active">
                 <div id="commentLineDiv">
-                    <label for="comments">Comments:</label>
+                    <label for="comments">Comments:</label><br>
                     <input type="text" id="comments" name="comments"><br>                    
                 </div>
                 <button id="add_comments" type="button">Add more</button>

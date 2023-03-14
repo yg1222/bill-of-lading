@@ -21,10 +21,10 @@ body{
   background-color: #c8c5c5;
   margin-bottom: 20px;
   }
-  
+
   .tab button {
   background-color: inherit;
-  float: left;
+  float: center;
   border: none;
   outline: none;
   cursor: pointer;
@@ -94,4 +94,16 @@ body{
 
   .complete{
     text-align: center;
+  }
+
+  @media(max-width: 600px){
+    div[class="main_div"] {
+      width: fit-content;
+    }
+    input[class="address"] {
+      width: 100%;
+    }
+    button[class=tab]{
+      float: center;
+    }
   }
