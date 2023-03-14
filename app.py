@@ -6,6 +6,7 @@ from xhtml2pdf import pisa
 import io
 import os
 from itertools import zip_longest
+from werkzeug.utils import secure_filename
 
 
 app = Flask(__name__)
@@ -47,7 +48,8 @@ def form():
         # TODO: check for existense
         try:
             logo = request.files["logo"]
-            logo_path = os.path.join(app.instance_path, logo.filename)
+            filename = secure_filename(logo.filename)
+            logo_path = os.path.join(app.instance_path, filename)
             print(logo_path)
             logo.save(logo_path)
             print(logo_path)    
