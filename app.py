@@ -55,6 +55,8 @@ def form():
             print(logo_path)    
         except FileNotFoundError:
             print("Error getting logo")
+        except IsADirectoryError:
+            print("Did not upload a file")
         
         
         # Logging lists
