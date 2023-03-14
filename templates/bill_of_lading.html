@@ -8,10 +8,10 @@
   <title>Document</title>
 </head>
 
-<body style="max-width: 800px; margin: 0 auto; ">
-  
+<body style="max-width: 800px; margin: 0 auto; font-size: 14px; ">
+
   <div style="padding-top: 1rem;">
-    
+
     <table style="table-layout: fixed; width: 100%;">
       <tr>
         <td style="width: 50%; ">{{your_company_name}} <br>
@@ -20,20 +20,25 @@
         </td>
         <td style="width: 50%; text-align: right;">
           <div class="logo">
-            <img
-              src="{{logo_path}}"
-              style="max-width: 40%;" alt="">
+            <img src="{{logo_path}}" style="max-width: 40%;" alt="">
           </div>
         </td>
       </tr>
     </table>
     <hr>
-    <b>Dispatcher:</b> {{dispatcher_name}}<br>
-    <b>Phone:</b> {{dispatcher_phone}}<br>
-    <b>Email:</b> {{dispatcher_email}}<br>
 
-    <hr>
-   
+    <table style="padding: 0 0; margin: 0 0;">
+      <tr>
+        <td><b>Dispatcher:</b> {{dispatcher_name}}<br></td>
+        <td><b>Phone:</b> {{dispatcher_phone}}<br></td>
+        <td><b>Email:</b> {{dispatcher_email}}<br></td>
+      </tr>
+    </table>
+
+
+
+    <hr style="padding: 0 0; margin: 0 0;">
+
     <table style="table-layout: fixed; width: 100%;">
       <tr>
         <td style="width: 33.33%; text-align: center;">Carrier Confirmation</td>
@@ -42,8 +47,8 @@
       </tr>
     </table>
     <hr>
-    
-    <table style="table-layout: fixed; width: 100%;">
+
+    <table style="table-layout: fixed; width: 100%; padding: 0 0; margin: 0 0; ">
       <tr>
         <td style="width: 50%;"><b>To: </b> {{to_company}} <BR>
           <b>Bill To:</b> {{bill_to}}
@@ -59,17 +64,17 @@
     <hr>
 
 
-    <table style="table-layout: fixed; width: 100%;">
+    <table style="table-layout: fixed; width: 100%; padding: 0 0; margin: 0 0;">
       <tr>
         <th style="width: 50%; text-align: left;">Pickup</th>
         <th style="width: 50%; text-align: left;">Delivery</th>
       </tr>
-    
+
       <!-- Dynamic row inserts and handle completely blank rows -->
-      {% for x in pickup_delivery_details %}   
-      {% if not ( x[0].pu_address == "" and  x[0].pu_time =="" and x[1].del_address == "" and  x[1].del_time =="") %} 
+      {% for x in pickup_delivery_details %}
+      {% if not ( x[0].pu_address == "" and  x[0].pu_time =="" and x[1].del_address == "" and  x[1].del_time =="") %}
       <tr>
-        <td style="width: 50%;">    
+        <td style="width: 50%;">
           Location: {{x[0].pu_address}}
           <br>
           Time: <b><time>{{x[0].pu_time}}</time></b>
@@ -79,7 +84,7 @@
           Location: {{x[1].del_address}}
           <br>
           Time: <b><time>{{x[1].del_time}}</time></b>
-          <br><br>    
+          <br><br>
         </td>
       </tr>
       {% endif %}
@@ -89,12 +94,17 @@
 
     <hr>
     <div>
-      Carrier's Authorized Signature: _______________<br>
-      Date:
+      <table style="padding: 0 0;">
+        <tr>
+          <td>Carrier's Authorized Signature: _______________</td>
+          <td>Date:</td>
+        </tr>
+      </table>
+
     </div>
     <div>
-      <p>Comments:</p>
-      <ul>
+      <p style="padding: 0 0;"><b>Comments:</b></p>
+      <ul style="padding: 0; margin: 0;">
         {% for r in comments %}
         <li>{{r}} </li>
         {% endfor %}
