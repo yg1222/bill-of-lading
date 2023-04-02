@@ -177,7 +177,7 @@ def register():
 
         elif Person.query.filter_by(email=email).count() == 0:
             print(Person.query.filter_by(email=email).count())
-            flash("Welcome, " +first_name + ". You've successfully signed up.", "success")
+            flash("Welcome, " +first_name + ". You've signed up successfully.", "success")
             print(first_name + " did not exist. Registering user")
             db.session.add(person_update)
             db.session.commit()
