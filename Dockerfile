@@ -25,7 +25,7 @@ RUN pip list
 
 RUN if [! -d /session]; then mkdir -p /session; fi
 
-RUN ls - all
+RUN ls - al
 
 # Build the application
 #RUN python setup.py build
