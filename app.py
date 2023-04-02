@@ -12,11 +12,11 @@ from xhtml2pdf import pisa
 from datetime import datetime
 import io
 import os
-from helpers import helpers_test, login_required
-import creds 
+from helpers import login_required
 from itertools import zip_longest
 from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash, check_password_hash
+# import creds 
 
 
 app = Flask(__name__)
