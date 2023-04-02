@@ -46,6 +46,7 @@ RUN pip install flask_login
 RUN pip install flask_session
 RUN pip install flask_sqlalchemy
 
+
 # Run the application
 #CMD [ "python", "-m", "flask", "run", "--host=0.0.0.0", "--port=5000"]
 CMD ["flask", "run", "--host=0.0.0.0"]

@@ -9,7 +9,6 @@ from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 from xhtml2pdf import pisa
-import psycopg2
 from datetime import datetime
 import io
 import os
