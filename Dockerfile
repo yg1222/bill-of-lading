@@ -20,11 +20,12 @@ ENV PATH="/app/bin:${PATH}"
 # Confirming flask is in the right dir
 WORKDIR /app
 COPY . .
-RUN ls -al
 
 RUN pip list
 
+RUN if [! -d /session]; then mkdir -p /session; fi
 
+RUN ls - all
 
 # Build the application
 #RUN python setup.py build
@@ -44,8 +45,3 @@ RUN pip install xhtml2pdf
 # Run the application
 #CMD [ "python", "-m", "flask", "run", "--host=0.0.0.0", "--port=5000"]
 CMD ["flask", "run", "--host=0.0.0.0"]
-
-
-
-
-

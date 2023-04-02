@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+  {% block head %}
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>
+    {% block title %}    
+    
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        {% for msg in messages %}
+          {{msg}}
+        {% endfor %}
+        {% elif not messages %}
+          {% if current_user.is_authenticated %}
+            {{ current_user.first_name }} - Ship Flow
+        {% else %}
+        Ship Flow
+        {% endif %}
+      {% endif %}
+    {% endwith %}    
+    
+    {% if current_user.is_authenticated %}
+      {{ current_user.first_name }} - Ship Flow
+    {% else %}
+      Ship Flow
+    {% endif %}
+    
+    {% endblock %}
+
+  </title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css')}}">
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <script defer src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+    integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+    crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js"
+    integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+    crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js"
+    integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+    crossorigin="anonymous"></script>
+
+  {% endblock %}
+</head>
+  <body class="layout_body">
+    <main>
+    <nav class="navbar navbar-expand-md navbar-expand-lg navbar-expand-xl navbar-dark bg-dark">
+      <a class="navbar-brand" href="{{ url_for('index') }}">
+        {% if current_user.is_authenticated %}
+        Hello, {{ current_user.first_name }}
+        {% else %}
+        Ship Flow
+        {% endif %}
+      </a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-links"
+        aria-controls="navbar-links">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbar-links">
+        <ul class="navbar-nav ml-auto">
+
+          {% if not current_user.is_authenticated %}
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('login') }}">Login</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('register') }}">Register</a>
+          </li>
+
+          {% elif current_user.is_authenticated %}
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('form') }}">Home</a>
+          </li>
+          <li>
+            <a class="nav-link" href="{{ url_for('logout') }}">Log Out</a>  
+          </li>
+          {% endif %}
+        </ul>
+      </div>
+    </nav>
+
+    <div>
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            {% if category == 'message' %}
+              <div class="alert alert-warning" role="alert">
+            {% else %}
+              <div class="alert alert-{{ category }}" role="alert">
+            {% endif %}
+              {{ message }}
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+      </div>
+
+      <!-- CONTENT -->
+      <div id="content">{% block content %}{% endblock %}</div>
+
+</main>
+
+<!-- Footer -->
+<div id="footer" class="sticky-bottom content container footer-div ft-div">
+  <footer class="footer d-flex flex-wrap justify-content-between align-items-center border-top">
+    <tr>
+      <td>
+        <p class="col-md-4 mb-0 text-muted ft-div">&copy; 2023 Dunno Productions</p>
+      </td>
+      <td>
+        <ul class="nav col-md-4 justify-content-end">
+          <li class="nav-item my_nav_list_items"><a href="/" class="nav-link px-2 text-muted ft-div">Home</a></li>
+          <li class="nav-item my_nav_list_items"><a href="https://github.com/yg1222/bill-of-lading" target="_blank" rel="noopener noreferrer"
+              class="nav-link px-2 text-muted">Github</a></li>
+      </td>
+    </tr>    
+  </footer>  
+</div>
+
+</body>
+</html>

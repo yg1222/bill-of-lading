@@ -41,8 +41,10 @@ function openTab(evt, tabName) {
     puAddress.setAttribute("type", "address");
     puAddress.setAttribute("name","pickup_location");
     puAddress.setAttribute("class","address");
+    puAddress.setAttribute("placeholder","Address");
     puTime.setAttribute("type","time");
     puTime.setAttribute("name","pickup_time");
+    puTime.setAttribute("class","time");
 
     dlTD= document.createElement("td");
     dlAddress= document.createElement("input");
@@ -50,15 +52,19 @@ function openTab(evt, tabName) {
     dlAddress.setAttribute("type", "address");
     dlAddress.setAttribute("name","delivery_location");
     dlAddress.setAttribute("class","address");
+    dlAddress.setAttribute("placeholder","Address");
     dlTime.setAttribute("type","time");
     dlTime.setAttribute("name","delivery_time");
+    dlTime.setAttribute("class","time");
 
     // Insert the input element into the table data
     puTD.appendChild(puAddress);
+    puTD.appendChild(document.createElement("br"));
     puTD.appendChild(lblTimePu);
     puTD.appendChild(puTime);
 
     dlTD.appendChild(dlAddress);
+    dlTD.appendChild(document.createElement("br"));
     dlTD.appendChild(lblTimeDl);
     dlTD.appendChild(dlTime);
 

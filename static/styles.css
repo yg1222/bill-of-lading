@@ -1,7 +1,52 @@
-body{
+/* body{
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+} */
+
+.form_body {
   background-color: #1d2534;
 }
-.main_div {
+
+.layout_body {
+  background-color: #828a74;
+}
+
+body {
+  min-height: 100vh;
+}
+
+
+.btn-generate-pdf {
+  background-color: #43473e;
+  color: antiquewhite;
+}
+
+.btn-generate-pdf:hover {
+  background-color: #ceddbb;
+  color: rgb(20, 19, 18);
+}
+
+.sign-up {
+  background-color: #587238;
+  color: antiquewhite;
+}
+
+.sign-up:hover {
+  background-color: #ceddbb;
+  color: rgb(20, 19, 18);
+}
+
+div {
+  overflow: auto;
+}
+
+.time {
+  width: 50%;
+  height: 20%;
+}
+
+.form_main_div {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -13,6 +58,7 @@ body{
   width: 50%;
   margin: auto;
   font-family: Arial, sans-serif;
+  /* opacity: 0.9; */
 }
 
 .tab {
@@ -20,9 +66,9 @@ body{
   border: 1px solid #ccc;
   background-color: #c8c5c5;
   margin-bottom: 20px;
-  }
+}
 
-  .tab button {
+.tab button {
   background-color: inherit;
   float: center;
   border: none;
@@ -32,27 +78,27 @@ body{
   transition: 0.3s;
   font-size: 17px;
   margin-right: 10px;
-  }
-  
-  .tab button:hover {
+}
+
+.tab button:hover {
   background-color: #b1cef1;
-  }
-  
-  .tab button.active {
+}
+
+.tab button.active {
   background-color: #828a74;
-  }
-  
-  .tabcontent {
+}
+
+.tabcontent {
   display: none;
   padding: 6px 12px;
   border-top: none;
-  }
-  
-  .tabcontent:first-child {
+}
+
+.tabcontent:first-child {
   display: block;
-  }
-  
-  input[type="text"] {
+}
+
+input[type="text"] {
   width: 100%;
   padding: 6px 10px;
   margin: 4px 0;
@@ -62,35 +108,35 @@ body{
   background-color: #f8f8f8;
   font-size: 16px;
   resize: none;
-  }
+}
 
-  input[id="dispatcher_email"], input[id="dispatcher_phone"] {
-    width: 80%;
-    height: 50%;
-    padding: 0;
-    box-sizing: border-box;
-    margin: 0;
-    border: 2px solid #ccc;
-    border-radius: 4px;
-    background-color: #f8f8f8;
-    font-size: 16px;
-    resize: none;
+input[id="dispatcher_email"],
+input[id="dispatcher_phone"] {
+  width: 80%;
+  height: 50%;
+  padding: 0;
+  box-sizing: border-box;
+  margin: 0;
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  background-color: #f8f8f8;
+  font-size: 16px;
+  resize: none;
+}
 
-  }
+input[class="address"] {
+  width: 50%;
+  padding: 5px 10px;
+  margin: 8px 0;
+  box-sizing: border-box;
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  background-color: #f8f8f8;
+  font-size: 16px;
+  resize: none;
+}
 
-  input[class="address"] {
-    width: 50%;
-    padding: 5px 10px;
-    margin: 8px 0;
-    box-sizing: border-box;
-    border: 2px solid #ccc;
-    border-radius: 4px;
-    background-color: #f8f8f8;
-    font-size: 16px;
-    resize: none;
-    }
-  
-  input[type="submit"] {
+input[type="submit"] {
   background-color: #91af4c;
   color: white;
   padding: 12px 20px;
@@ -99,25 +145,40 @@ body{
   cursor: pointer;
   margin-top: 20px;
   font-size: 16px;
-  }
-  
-  input[type="submit"]:hover {
+}
+
+input[type="submit"]:hover {
   background-color: #868d86;
+}
 
+.complete {
+  text-align: center;
+}
+
+.sticky-bottom {
+  position: sticky;
+  top: 100%;
+}
+
+div[id="footer"] {
+  background-color: #ceddbb;
+  color: black;
+}
+
+@media(max-width: 600px) {
+  div[class="form_main_div"] {
+    width: fit-content;
   }
 
-  .complete{
-    text-align: center;
+  input[class="address"] {
+    width: 100%;
   }
 
-  @media(max-width: 600px){
-    div[class="main_div"] {
-      width: fit-content;
-    }
-    input[class="address"] {
-      width: 100%;
-    }
-    button[class=tab]{
-      float: center;
-    }
+  button[class=tab] {
+    float: center;
   }
+
+  .my_nav_list_items {
+    display: none;
+  }
+}

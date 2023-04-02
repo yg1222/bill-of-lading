@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+
+<!-- Override layout template using jinja for example, 
+  override the title by inserting content 
+  into % block title %TItle content% endblock % -->
+
+
+{% block content %}
+
+<div class="box">
+	<h1>Ship Flow</h1>
+
+  <div class="d-flex justify-content-center">
+  <a href="{{ url_for('form') }}" class="btn btn-generate-pdf">Generage Bill of Lading PDF</a>
+</div>
+   
+</div>
+
+{% endblock %}

@@ -1,20 +1,16 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "layout.html" %}
+{% block content %}
 
-<head>
+<body class="form_body">
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="static\styles.css">
     <script defer src="static\form.js"></script> 
-    <meta charset="UTF-8">
-    <!-- <meta http-equiv="X-UA-Compatible" content="IE=edge"> -->
-    <!-- <meta http-equiv="Content-Type" content="application/javascript"> -->
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BOL Generator</title>
-</head>
 
-<body>
+
     <br>
-    <div class="main_div">
+    <div class="form_main_div" >
         <div class="tab">
             <button class="tablinks active" onclick="openTab(event, 'company')">Company Information</button>
             <button class="tablinks" onclick="openTab(event, 'dispatcher')">Dispatcher's Information</button>
@@ -75,7 +71,7 @@
                 <input type="text" id="input7" name="rate"><br>
             </div>
 
-            <div id="location" class="tabcontent active">
+            <div id="location" class="tabcontent active" style="height: 400px; overflow: auto;">
 
                 <label for="run_date">Run Date:</label><br>
                 <input type="date" id="input4" name="run_date"><br><br>
@@ -89,15 +85,15 @@
                         </tr>
                         <td>
                             
-                            <input type="text" id="pickup_location" class="address" name="pickup_location"> <br>
+                            <input type="text" id="pickup_location" class="address" name="pickup_location" placeholder="Address"> <br>
                             <label for="pickup_time">Time:</label>
-                            <input type="time" name="pickup_time"><br>
+                            <input type="time" name="pickup_time" class="time" placeholder="00:00"><br>
                         </td>
                         <td>
                             
-                            <input type="text" id="delivery_location" class="address" name="delivery_location"><br>
+                            <input type="text" id="delivery_location" class="address" name="delivery_location" placeholder="Address"><br>
                             <label for="delivery_time">Time:</label>
-                            <input type="time" name="delivery_time"><br>
+                            <input type="time" name="delivery_time" class="time" placeholder="12:00"><br>
                         </td>
                     </tr>
                 </table>
@@ -107,7 +103,7 @@
             </div>
 
             <div id="reminder" class="tabcontent active">
-                <div id="commentLineDiv">
+                <div id="commentLineDiv" style="max-height: 400px; overflow: auto;">
                     <label for="comments">Comments:</label><br>
                     <input type="text" id="comments" name="comments"><br>                    
                 </div>
@@ -129,4 +125,4 @@
     
 </body>
 
-</html>
+{% endblock %}
