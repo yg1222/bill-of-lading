@@ -102,7 +102,7 @@ def subscribe():
 @app.route("/login", methods = ['GET', 'POST'])
 def login():        
     if request.method == "POST":
-        email = request.form.get("email")
+        email = request.form.get("email").lower().replace(" ", "")
         password = request.form.get("password")
         print(email)
         
@@ -159,7 +159,7 @@ def register():
         first_name = request.form.get("first_name")
         last_name = request.form.get("last_name")
         username = request.form.get("username")
-        email = request.form.get("email")
+        email = request.form.get("email").lower().replace(" ", "")
         # display_name = request.form.get("display_name")
         password_hash = generate_password_hash(request.form.get("password"), method='pbkdf2:sha256', salt_length=8)
         #print(password_hash)
