@@ -156,8 +156,8 @@ def register():
 
         print("Register Request triggered")   
         # Get registration data
-        first_name = request.form.get("first_name")
-        last_name = request.form.get("last_name")
+        first_name = request.form.get("first_name").replace(" ", "")
+        last_name = request.form.get("last_name").replace(" ", "")
         username = request.form.get("username")
         email = request.form.get("email").lower().replace(" ", "")
         # display_name = request.form.get("display_name")
