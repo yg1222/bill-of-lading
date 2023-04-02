@@ -45,7 +45,7 @@ RUN pip install xhtml2pdf
 RUN pip install flask_login 
 RUN pip install flask_session
 RUN pip install flask_sqlalchemy
-
+RUN pip install psycopg2
 
 # Run the application
 #CMD [ "python", "-m", "flask", "run", "--host=0.0.0.0", "--port=5000"]
