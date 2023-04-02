@@ -39,8 +39,11 @@ COPY --from=builder /app /app
 # Set the working directory for subsequent commands
 WORKDIR /app
 
+# Fix ModuleNotFoundError 
 RUN pip install flask
 RUN pip install xhtml2pdf
+RUN pip install flask_login
+
 
 # Run the application
 #CMD [ "python", "-m", "flask", "run", "--host=0.0.0.0", "--port=5000"]
