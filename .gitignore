@@ -1,0 +1,8 @@
+commiter.sh
+__pycache__/
+dev_notes
+creds.py
+instance/users.db
+instance/
+flask_session/
+session/
