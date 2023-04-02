@@ -8,20 +8,19 @@
   <title>
     {% block title %}    
     
-    {% with messages = get_flashed_messages() %}
-      {% if messages %}
-        {% for msg in messages %}
-          {{msg}}
-        {% endfor %}
-      {% elif not messages %}
-        {% if current_user.is_authenticated %}
-          {{ current_user.first_name }} - Ship Flow
-        {% else %}
-          Ship Flow
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}
+          {% for msg in messages %}
+            {{msg}}
+          {% endfor %}
+        {% elif not messages %}
+          {% if current_user.is_authenticated %}
+            {{ current_user.first_name }} - Ship Flow
+          {% else %}
+            Ship Flow
+          {% endif %}
         {% endif %}
-      {% endif %}
-    {% endwith %}     
-    
+      {% endwith %}     
     
     {% endblock %}
 
