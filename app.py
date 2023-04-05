@@ -16,6 +16,9 @@ from helpers import login_required
 from itertools import zip_longest
 from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash, check_password_hash
+# from flask_wtf import FlaskForm
+# from wtforms import StringField
+# from wtforms.validators import DataRequired
 # import creds 
 
 
@@ -85,7 +88,7 @@ def after_request(response):
 
 @app.route("/")
 def index():
-    print(current_user)    
+    # print(current_user)    
     if current_user.is_authenticated:
         return render_template("form.html")
     else:
@@ -100,11 +103,12 @@ def subscribe():
 
 
 @app.route("/login", methods = ['GET', 'POST'])
-def login():        
+def login():      
     if request.method == "POST":
         email = request.form.get("email").lower().replace(" ", "")
         password = request.form.get("password")
-        print(email)
+        print("Login query \u2193 \n"+request.remote_addr + " - " + 
+        str(datetime.now()) + " \u2193 \n"+  email)
         
         #check_password_hash(pwhash, password) 
         # where pwhash == hash in db, password == arguement password, returns true if matched
@@ -128,8 +132,7 @@ def login():
                 is_logged_in = login_user(user)
                 print("Is logged in check: " + str(is_logged_in))
                 flash('Logged in successfully.', "success")
-                print("Print is_authenticated ")
-                print(user.is_authenticated)
+                print("? user.is_authenticated: " +str(user.is_authenticated))
                 return render_template("form.html", first_name=first_name)
             else:
                 # Password mismatch. FLash("Invalid email or password")
@@ -138,7 +141,7 @@ def login():
         
         elif not user:
             # No email in db. FLash("Invalid email or password")
-            flash('Unable to log in. Invalid username or password.', "warning")
+            flash('Invalid username or password.', "warning")
             print("No person in DB with this email. Redirect to Registration")
             # print("Print is_authenticated ")
             # print(user.is_authenticated)
