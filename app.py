@@ -19,7 +19,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 # from flask_wtf import FlaskForm
 # from wtforms import StringField
 # from wtforms.validators import DataRequired
-# import creds 
+import creds 
 
 
 app = Flask(__name__)
@@ -305,7 +305,7 @@ def form():
             os.remove(file_path)
 
     elif request.method == "GET":
-        return render_template("form.html")
+        return render_template("login.html")
 
 if __name__ == '__main__':
     app.run(debug=True)
