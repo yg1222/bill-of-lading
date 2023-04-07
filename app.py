@@ -22,7 +22,7 @@ from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import DataRequired, Regexp, Email, Length
 
 from werkzeug.utils import secure_filename
-import creds 
+#import creds 
 
 
 app = Flask(__name__)
