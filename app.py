@@ -16,10 +16,13 @@ from helpers import login_required
 from itertools import zip_longest
 from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash, check_password_hash
-# from flask_wtf import FlaskForm
-# from wtforms import StringField
-# from wtforms.validators import DataRequired
-# import creds 
+
+from flask_wtf import FlaskForm
+from wtforms import StringField, PasswordField, SubmitField
+from wtforms.validators import DataRequired, Regexp, Email, Length
+
+from werkzeug.utils import secure_filename
+import creds 
 
 
 app = Flask(__name__)
@@ -46,8 +49,27 @@ login_manager.login_view = "login"
 # app.config["USE_SESSION_FOR_NEXT"] = True
 # Session(app)
 
-##CREATE TABLE IN DB
-# Organization Table
+# Login and register form
+class LoginForm(FlaskForm):
+    email = StringField('Email', validators=[DataRequired(), Email()], 
+    render_kw={"class": "form-control col-sm-4", "placeholder":"Email"}, )
+    password = PasswordField('Password', validators=[DataRequired()], 
+    render_kw={"class": "form-control col-sm-4", "placeholder":"Password"} )
+    submit = SubmitField('Sign in', render_kw={"class":"btn sign-up"})
+
+class RegisterForm(FlaskForm):
+    
+    first_name = StringField('First Name', validators=[DataRequired(), Length(min=1, max=50)],
+    render_kw={"class": "form-control col-sm-4", "placeholder":"First Name"})
+    last_name = StringField('Last Name', validators=[DataRequired(), Length(min=1, max=50)],
+    render_kw={"class": "form-control col-sm-4", "placeholder":"Last Name"})    
+    username = StringField('Username', validators=[DataRequired(), Regexp('^\S+$'), Length(min=3, max=20)],
+    render_kw={"class": "form-control col-sm-4", "placeholder":"Username"})    
+    email = StringField('Your Email', validators=[DataRequired(), Email()], 
+    render_kw={"class": "form-control col-sm-4", "placeholder":"Email"}, )
+    password = PasswordField('Password', validators=[DataRequired(), Length(min=6)], 
+    render_kw={"class": "form-control col-sm-4", "placeholder":"Password"} )
+    submit = SubmitField('Sign up', render_kw={"class":"btn sign-up"})
 
 # Person Table
 class Person(UserMixin, db.Model):
@@ -88,11 +110,12 @@ def after_request(response):
 
 @app.route("/")
 def index():
+    login_form = LoginForm()  
     # print(current_user)    
     if current_user.is_authenticated:
         return render_template("form.html")
     else:
-        return render_template("login.html")
+        return render_template("login.html", form=login_form)
 
 
 @app.route("/subscribe", methods = ['GET', 'POST'])
@@ -103,98 +126,115 @@ def subscribe():
 
 
 @app.route("/login", methods = ['GET', 'POST'])
-def login():      
-    if request.method == "POST":
-        email = request.form.get("email").lower().replace(" ", "")
-        password = request.form.get("password")
-        print("Login query \u2193 \n"+request.remote_addr + " - " + 
-        str(datetime.now()) + " \u2193 \n"+  email)
+def login(): 
+    login_form = LoginForm() 
+    if request.method == "POST":        
+        if login_form.validate_on_submit():
+            email = request.form.get("email")
+            password = request.form.get("password")
+            print("Login query \u2193 \n"+request.remote_addr + " - " + 
+            str(datetime.now()) + " \u2193 \n"+  email)
         
-        #check_password_hash(pwhash, password) 
-        # where pwhash == hash in db, password == arguement password, returns true if matched
-        if Person.query.filter_by(email=email).count() == 1:
-            user = Person.query.filter_by(email=email).first()
-            #print(Person.query.all())
-        else:
-            user = None
-
-        # Valid email, there is one Person with this email in the DB
-        if user:
-            user_pwhash = user.password_hash
-            person_id = user.id
-            first_name = user.first_name
-            arg_hash = check_password_hash(user_pwhash, password)
-            print("Found email in database")
-            #print(user)
-            print("Password match == " + str(arg_hash))            
-            # If authenticated, remember which user has logged in
-            if arg_hash == True:
-                is_logged_in = login_user(user)
-                print("Is logged in check: " + str(is_logged_in))
-                flash('Logged in successfully.', "success")
-                print("? user.is_authenticated: " +str(user.is_authenticated))
-                return render_template("form.html", first_name=first_name)
+            #check_password_hash(pwhash, password) 
+            # where pwhash == hash in db, password == arguement password, returns true if matched
+            if Person.query.filter_by(email=email).count() == 1:
+                user = Person.query.filter_by(email=email).first()
+                #print(Person.query.all())
             else:
-                # Password mismatch. FLash("Invalid email or password")
-                flash("Invalid email or password", "warning")
-                return render_template("login.html")
-        
-        elif not user:
-            # No email in db. FLash("Invalid email or password")
-            flash('Invalid username or password.', "warning")
-            print("No person in DB with this email. Redirect to Registration")
-            # print("Print is_authenticated ")
-            # print(user.is_authenticated)
-            return render_template("login.html")
+                user = None
 
-        print("Login Request triggered")
+            # Valid email, there is one Person with this email in the DB
+            if user:
+                user_pwhash = user.password_hash
+                person_id = user.id
+                first_name = user.first_name
+                arg_hash = check_password_hash(user_pwhash, password)
+                print("Found email in database")
+                #print(user)
+                print("Password match == " + str(arg_hash))            
+                # If authenticated, remember which user has logged in
+                if arg_hash == True:
+                    is_logged_in = login_user(user)
+                    print("Is logged in check: " + str(is_logged_in))
+                    flash('Logged in successfully.', "success")
+                    print("? user.is_authenticated: " +str(user.is_authenticated))
+                    return render_template("form.html", first_name=first_name)
+                else:
+                    # Password mismatch. FLash("Invalid email or password")
+                    flash("Invalid email or password", "warning")
+                    return render_template("login.html",form=login_form)
+            
+            elif not user:
+                # No email in db. FLash("Invalid email or password")
+                flash('Invalid email or password.', "warning")
+                print("No person in DB with this email. Redirect to Registration")
+                # print("Print is_authenticated ")
+                # print(user.is_authenticated)
+                return render_template("login.html",form=login_form)
+            print("Login Request triggered")
+
+        else:
+            flash("Unable to sign this user", "warning")
+            print("Unable to sign this user")
+            return render_template("login.html",form=login_form)
 
     else:
-        return render_template("login.html")
+        # If method is GET
+        if current_user.is_authenticated:
+            return render_template("form.html")
+        else:
+            return render_template("login.html", form=LoginForm())
 
 
 @app.route("/register", methods = ['GET', 'POST'])
 def register():
+    register_form = RegisterForm()
     if request.method == "POST":
+        if register_form.validate_on_submit():
 
-        print("Register Request triggered")   
-        # Get registration data
-        first_name = request.form.get("first_name").replace(" ", "")
-        last_name = request.form.get("last_name").replace(" ", "")
-        username = request.form.get("username")
-        email = request.form.get("email").lower().replace(" ", "")
-        # display_name = request.form.get("display_name")
-        password_hash = generate_password_hash(request.form.get("password"), method='pbkdf2:sha256', salt_length=8)
-        #print(password_hash)
+            print("Register Request triggered")   
+            # Get registration data
+            first_name = request.form.get("first_name")
+            last_name = request.form.get("last_name")
+            username = request.form.get("username")
+            email = request.form.get("email").lower()
+            # display_name = request.form.get("display_name")
+            password_hash = generate_password_hash(request.form.get("password"), method='pbkdf2:sha256', salt_length=8)
+            #print(password_hash)
 
-        # SQL: write data into db
-        # Set data
-        person_update = Person(username=username, first_name=first_name,last_name=last_name,
-                               email=email, password_hash=password_hash)
-        
-        # Checking database before registering
-        if Person.query.filter_by(email=email).count() >0:
-            print(first_name + " already exists")
-            flash("Oops! "+ email + " already exists. If this is you, please log in.", "warning")            
-            return render_template("register.html")
+            # SQL: write data into db
+            # Set data
+            person_update = Person(username=username, first_name=first_name,last_name=last_name,
+                                email=email, password_hash=password_hash)
+            
+            # Checking database before registering
+            if Person.query.filter_by(email=email).count() >0:
+                print(first_name + " already exists")
+                flash("Oops! "+ email + " already exists. If this is you, please log in.", "warning")            
+                return render_template("register.html",form=register_form)
 
-        elif Person.query.filter_by(email=email).count() == 0:
-            print(Person.query.filter_by(email=email).count())
-            flash("Welcome, " +first_name + ". You've signed up successfully.", "success")
-            print(first_name + " did not exist. Registering user")
-            db.session.add(person_update)
-            db.session.commit()
-            user = person_update
-            is_logged_in = login_user(user)
-            return render_template("form.html")
-        
+            elif Person.query.filter_by(email=email).count() == 0:
+                print(Person.query.filter_by(email=email).count())
+                flash("Welcome, " +first_name + ". You've signed up successfully.", "success")
+                print(first_name + " did not exist. Registering user")
+                db.session.add(person_update)
+                db.session.commit()
+                user = person_update
+                is_logged_in = login_user(user)
+                return render_template("form.html")
+            
+            else:
+                flash("Unable to Register this user", "warning")
+                print("Unable to Register this user")
+                return render_template("register.html",form=register_form)
+
         else:
             flash("Unable to Register this user", "warning")
             print("Unable to Register this user")
-            return render_template("register.html")
+            return render_template("register.html",form=register_form)
 
     else:
-        return render_template("register.html")
+        return render_template("register.html",form=register_form)
 
 
 @app.route("/logout", methods = ['GET', 'POST'])
@@ -203,14 +243,13 @@ def logout():
     logout_user()
     print("Logout Request triggered")
     flash("Logged out successfully", "success")
-    return render_template("login.html")
+    return render_template("login.html", form=LoginForm())
 
 
 @app.route("/form", methods = ['GET', 'POST'])
 @login_required
 def form():
-    print("Request triggered")
-    
+    print("Request triggered")    
     if request.method == "POST":       
         # Getting values from the form
         your_company_name = str(request.form.get("your_company_name"))    
@@ -305,7 +344,10 @@ def form():
             os.remove(file_path)
 
     elif request.method == "GET":
-        return render_template("login.html")
+        if current_user.is_authenticated:
+            return render_template("form.html")
+        else:
+            return render_template("login.html", form=LoginForm())
 
 if __name__ == '__main__':
     app.run(debug=True)

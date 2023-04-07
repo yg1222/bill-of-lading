@@ -28,7 +28,7 @@ body {
 }
 
 .sign-up {
-  background-color: #587238;
+  background-color: #252f17;
   color: antiquewhite;
 }
 
@@ -137,7 +137,7 @@ input[class="address"] {
 }
 
 input[type="submit"] {
-  background-color: #91af4c;
+  background-color: #477e6e;
   color: white;
   padding: 12px 20px;
   border: none;
