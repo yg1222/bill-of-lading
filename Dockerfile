@@ -49,6 +49,7 @@ RUN pip install psycopg2-binary
 RUN pip install flask_wtf
 RUN pip install email_validator
 
+
 # Run the application
 #CMD [ "python", "-m", "flask", "run", "--host=0.0.0.0", "--port=5000"]
 CMD ["flask", "run", "--host=0.0.0.0"]
