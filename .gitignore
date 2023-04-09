@@ -6,3 +6,5 @@ instance/users.db
 instance/
 flask_session/
 session/
+migrations/
+.vscode/

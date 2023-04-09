@@ -1,33 +1,25 @@
 # Bill of Lading Generator
-# Author: YGJ
 
-from flask import Flask, flash, render_template, redirect, request, session, make_response, send_file, url_for, flash, send_from_directory, current_app
-from flask_login import UserMixin, login_user, LoginManager, login_required, current_user, logout_user
-from flask_session import Session
-from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import ForeignKey
-from sqlalchemy.orm import relationship
-from sqlalchemy.ext.declarative import declarative_base
-from xhtml2pdf import pisa
-from datetime import datetime
-import io
-import os
+from models.imports import Flask, flash, render_template, redirect, request, \
+session, make_response, send_file, url_for, flash, send_from_directory, \
+current_app, UserMixin, login_user, LoginManager, login_required, \
+current_user, logout_user, Session, SQLAlchemy, ForeignKey, relationship, \
+declarative_base, pisa, datetime, os, io, zip_longest, secure_filename, \
+generate_password_hash, check_password_hash, FlaskForm, StringField, \
+PasswordField, SubmitField, DataRequired, Regexp, Email, Length, \
+secure_filename, Migrate
+
 from helpers import login_required
-from itertools import zip_longest
-from werkzeug.utils import secure_filename
-from werkzeug.security import generate_password_hash, check_password_hash
-
-from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField
-from wtforms.validators import DataRequired, Regexp, Email, Length
-
-from werkzeug.utils import secure_filename
-#import creds 
+from routes import bp as routing_bp
+from models.forms import LoginForm, RegisterForm
+from models.database import db, Person, Companies, PersonToCompany, Feedback
+import creds 
 
 
 app = Flask(__name__)
 
 # app.config["TEMPLATES_AUTO_RELOAD"] = True
+app.register_blueprint(routing_bp)
 
 app.config['FLASH_MESSAGES_OPTIONS'] = {'timeout': 3}
 app.config["SESSION_FILE_DIR"] = os.environ.get("SESSION_FILE_DIR")
@@ -35,12 +27,19 @@ app.config["SESSION_FILE_DIR"] = os.environ.get("SESSION_FILE_DIR")
 app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY")
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URL")
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy(app)
 
+# Bind the db object from databse.py to this Flask application
+db.init_app(app)
+migrate = Migrate(app, db)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "login"
+
+# Testing bluprint registration
+for rule in app.url_map.iter_rules():
+    print("route --> " + str(rule))
+
 
 
 # # Configure session to use filesystem (instead of signed cookies)
@@ -49,42 +48,7 @@ login_manager.login_view = "login"
 # app.config["USE_SESSION_FOR_NEXT"] = True
 # Session(app)
 
-# Login and register form
-class LoginForm(FlaskForm):
-    email = StringField('Email', validators=[DataRequired(), Email()], 
-    render_kw={"class": "form-control col-sm-4", "placeholder":"Email"}, )
-    password = PasswordField('Password', validators=[DataRequired()], 
-    render_kw={"class": "form-control col-sm-4", "placeholder":"Password"} )
-    submit = SubmitField('Sign in', render_kw={"class":"btn sign-up"})
 
-class RegisterForm(FlaskForm):
-    
-    first_name = StringField('First Name', validators=[DataRequired(), Length(min=1, max=50)],
-    render_kw={"class": "form-control col-sm-4", "placeholder":"First Name"})
-    last_name = StringField('Last Name', validators=[DataRequired(), Length(min=1, max=50)],
-    render_kw={"class": "form-control col-sm-4", "placeholder":"Last Name"})    
-    username = StringField('Username', validators=[DataRequired(), Regexp('^\S+$'), Length(min=3, max=20)],
-    render_kw={"class": "form-control col-sm-4", "placeholder":"Username"})    
-    email = StringField('Your Email', validators=[DataRequired(), Email()], 
-    render_kw={"class": "form-control col-sm-4", "placeholder":"Email"}, )
-    password = PasswordField('Password', validators=[DataRequired(), Length(min=6)], 
-    render_kw={"class": "form-control col-sm-4", "placeholder":"Password"} )
-    submit = SubmitField('Sign up', render_kw={"class":"btn sign-up"})
-
-# Person Table
-class Person(UserMixin, db.Model):
-    __tablename__ = "person"
-    id = db.Column(db.Integer, primary_key=True)    
-    username = db.Column(db.String(50))
-    first_name = db.Column(db.String(50))
-    last_name = db.Column(db.String(50))
-    email = db.Column(db.String(255), unique=True)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    updated_at = db.Column(db.DateTime, onupdate=datetime.utcnow)
-    password_hash = db.Column(db.String(1000))
-    
-    def __repr__(self):
-        return '<Person {}>'.format(self.username)
     
 
 @login_manager.user_loader
@@ -156,6 +120,7 @@ def login():
                 if arg_hash == True:
                     is_logged_in = login_user(user)
                     print("Is logged in check: " + str(is_logged_in))
+                    print("current_user.id "+ str(current_user.id))
                     flash('Logged in successfully.', "success")
                     print("? user.is_authenticated: " +str(user.is_authenticated))
                     return render_template("form.html", first_name=first_name)
@@ -260,6 +225,7 @@ def form():
         dispatcher_phone = str(request.form.get("dispatcher_phone"))
         run_date = str(request.form.get("run_date"))
         dock = str(request.form.get("dock"))
+        po_number = str(request.form.get("po_number"))
         to_company = str(request.form.get("to_company"))
         bill_to = str(request.form.get("bill_to"))
         quantity = str(request.form.get("quantity"))
@@ -321,7 +287,7 @@ def form():
         bol_html =  render_template("bill_of_lading.html", your_company_name=your_company_name,logo_path=logo_path,your_company_phone=your_company_phone, your_company_address=your_company_address, 
                             dispatcher_name=dispatcher_name,dispatcher_email=dispatcher_email,dispatcher_phone=dispatcher_phone,
                             run_date=run_date,dock=dock,to_company=to_company,bill_to=bill_to,quantity=quantity,weight=weight,rate=rate,equipment_details=equipment_details,
-                            pickup_delivery_details=pickup_delivery_details,comments=comments_formatted,
+                            pickup_delivery_details=pickup_delivery_details,comments=comments_formatted,po_number=po_number
                             )
 
         bol_pdf = io.BytesIO()
