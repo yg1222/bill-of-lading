@@ -13,7 +13,7 @@ from helpers import login_required
 from routes import bp as routing_bp
 from models.forms import LoginForm, RegisterForm
 from models.database import db, Person, Companies, PersonToCompany, Feedback
-import creds 
+#import creds 
 
 
 app = Flask(__name__)
