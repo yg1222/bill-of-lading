@@ -49,8 +49,9 @@ RUN pip install psycopg2-binary
 RUN pip install flask_wtf
 RUN pip install email_validator
 RUN pip install flask_migrate
-RUN pip install flask_debugtoolbar
-RUN pip install bleach
+# RUN pip install flask_debugtoolbar
+# RUN pip install bleach
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Run the application
 #CMD [ "python", "-m", "flask", "run", "--host=0.0.0.0", "--port=5000"]
