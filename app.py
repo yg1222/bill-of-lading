@@ -7,7 +7,8 @@ current_user, logout_user, Session, SQLAlchemy, ForeignKey, relationship, \
 declarative_base, pisa, datetime, os, io, zip_longest, secure_filename, \
 generate_password_hash, check_password_hash, FlaskForm, StringField, \
 PasswordField, SubmitField, DataRequired, Regexp, Email, Length, \
-secure_filename, Migrate
+secure_filename, Migrate, uuid, DebugToolbarExtension, clean, \
+    Environment
 
 from helpers import login_required
 from routes import bp as routing_bp
@@ -18,6 +19,7 @@ from models.database import db, Person, Companies, PersonToCompany, Feedback
 
 app = Flask(__name__)
 
+app.debug = False
 # app.config["TEMPLATES_AUTO_RELOAD"] = True
 app.register_blueprint(routing_bp)
 
@@ -28,9 +30,23 @@ app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY")
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URL")
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
+UPLOAD_FOLDER = 'logos/'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+
+
+
 # Bind the db object from databse.py to this Flask application
 db.init_app(app)
 migrate = Migrate(app, db)
+
+toolbar = DebugToolbarExtension(app)
+
+# This clears the debugging toolbar and re-initializes it if uncommented
+# toolbar = DebugToolbarExtension()
+# # Then later on.
+# app = create_app('the-config.cfg')
+# toolbar.init_app(app)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -217,37 +233,55 @@ def form():
     print("Request triggered")    
     if request.method == "POST":       
         # Getting values from the form
-        your_company_name = str(request.form.get("your_company_name"))    
-        your_company_address = str(request.form.get("your_company_address"))
-        your_company_phone = str(request.form.get("your_company_phone"))
-        dispatcher_name = str(request.form.get("dispatcher_name"))
-        dispatcher_email = str(request.form.get("dispatcher_email"))
-        dispatcher_phone = str(request.form.get("dispatcher_phone"))
-        run_date = str(request.form.get("run_date"))
-        dock = str(request.form.get("dock"))
-        po_number = str(request.form.get("po_number"))
-        to_company = str(request.form.get("to_company"))
-        bill_to = str(request.form.get("bill_to"))
-        quantity = str(request.form.get("quantity"))
-        weight = str(request.form.get("weight"))
-        rate = str(request.form.get("rate"))
-        equipment_details = str(request.form.get("equipment_details"))
+        your_company_name = clean(str(request.form.get("your_company_name")))    
+        your_company_address = clean(str(request.form.get("your_company_address")))
+        your_company_phone = clean(str(request.form.get("your_company_phone")))
+        dispatcher_name = clean(str(request.form.get("dispatcher_name")))
+        dispatcher_email = clean(str(request.form.get("dispatcher_email")))
+        dispatcher_phone = clean(str(request.form.get("dispatcher_phone")))
+        run_date = clean(str(request.form.get("run_date")))
+        dock = clean(str(request.form.get("dock")))
+        po_number = clean(str(request.form.get("po_number")))
+        to_company = clean(str(request.form.get("to_company")))
+        bill_to = clean(str(request.form.get("bill_to")))
+        quantity = clean(str(request.form.get("quantity")))
+        weight = clean(str(request.form.get("weight")))
+        rate = clean(str(request.form.get("rate")))
+        equipment_details = clean(str(request.form.get("equipment_details")))
+        logo_ext = clean(str(request.form.get("logo_ext")), tags=[], attributes={}, protocols=['http', 'https'])
+        print("clean url: " + logo_ext)
         
         # Lists
+        def clean_list(y):
+            return [clean(x) for x in y]
         pickup_locations = request.form.getlist("pickup_location")
+        pickup_locations = clean_list(pickup_locations)
         pickup_times = request.form.getlist("pickup_time")
+        pickup_times = clean_list(pickup_times)
         delivery_locations = request.form.getlist("delivery_location")
+        delivery_locations = clean_list(delivery_locations)
         delivery_times = request.form.getlist("delivery_time")
+        delivery_times = clean_list(delivery_times)
         comments = request.form.getlist("comments")
+        comments = clean_list(comments)
         
+        
+        logo_size = None
         # Files
         try:
+            # Attempting to save the logo file in the logos dir
             logo = request.files["logo"]
-            filename = secure_filename(logo.filename)
-            logo_path = os.path.join(app.instance_path, filename)
+            filename_unformatted = secure_filename(logo.filename)
+            print("filename_unformatted: " + str(filename_unformatted))
+            # Setting unique filenames
+            filename = str(uuid.uuid1()) + "_" + filename_unformatted 
+            print("filename: "+ str(filename))
+            logo_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             print(logo_path)
             logo.save(logo_path)
-            print(logo_path)    
+            print(logo_path) 
+            logo_size = os.path.getsize(logo_path)
+            print(f"The size of {logo_path} is {logo_size} bytes.")
         except FileNotFoundError:
             print("Error getting logo. Caught FileNotFoundError")
         except IsADirectoryError:
@@ -287,8 +321,8 @@ def form():
         bol_html =  render_template("bill_of_lading.html", your_company_name=your_company_name,logo_path=logo_path,your_company_phone=your_company_phone, your_company_address=your_company_address, 
                             dispatcher_name=dispatcher_name,dispatcher_email=dispatcher_email,dispatcher_phone=dispatcher_phone,
                             run_date=run_date,dock=dock,to_company=to_company,bill_to=bill_to,quantity=quantity,weight=weight,rate=rate,equipment_details=equipment_details,
-                            pickup_delivery_details=pickup_delivery_details,comments=comments_formatted,po_number=po_number
-                            )
+                            pickup_delivery_details=pickup_delivery_details,comments=comments_formatted,po_number=po_number,
+                            logo_ext=logo_ext,logo_size=logo_size)
 
         bol_pdf = io.BytesIO()
         pisa.CreatePDF(bol_html, dest=bol_pdf)
