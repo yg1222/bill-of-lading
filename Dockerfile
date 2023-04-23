@@ -40,15 +40,15 @@ COPY --from=builder /app /app
 WORKDIR /app
 
 # Fix ModuleNotFoundError 
-RUN pip install flask
-RUN pip install xhtml2pdf
-RUN pip install flask_login 
-RUN pip install flask_session
-RUN pip install flask_sqlalchemy
-RUN pip install psycopg2-binary
-RUN pip install flask_wtf
-RUN pip install email_validator
-RUN pip install flask_migrate
+# RUN pip install flask
+# RUN pip install xhtml2pdf
+# RUN pip install flask_login 
+# RUN pip install flask_session
+# RUN pip install flask_sqlalchemy
+# RUN pip install psycopg2-binary
+# RUN pip install flask_wtf
+# RUN pip install email_validator
+# RUN pip install flask_migrate
 # RUN pip install flask_debugtoolbar
 # RUN pip install bleach
 RUN pip install --no-cache-dir -r requirements.txt
