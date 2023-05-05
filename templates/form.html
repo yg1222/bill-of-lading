@@ -88,17 +88,19 @@
                 <table name="run_table" id="run_table">
                     <tr name="run_row">
                         <tr>
-                            <td>Pickup Location and Time</td>
-                            <td>Delivery Location and Time</td>
+                            <td>Pickup Details</td>
+                            <td>Delivery Details</td>
                         </tr>
-                        <td>
-                            
+                        <td>    
+                            <input type="text" id="pickup_company" class="companies" name="pickup_company" placeholder="Sending Company"> <br>
+                            <input type="text" class="contacts" name="pickup_contact" placeholder="Contact info"> <br>
                             <input type="text" id="pickup_location" class="address" name="pickup_location" placeholder="Address"> <br>
                             <label for="pickup_time">Time:</label>
                             <input type="time" name="pickup_time" class="time" placeholder="00:00"><br>
                         </td>
-                        <td>
-                            
+                        <td>    
+                            <input type="text" id="delivery_company" class="companies" name="delivery_company" placeholder="Receiving Company"> <br>   
+                            <input type="text" class="contacts" name="delivery_contact" placeholder="Contact info"> <br>                     
                             <input type="text" id="delivery_location" class="address" name="delivery_location" placeholder="Address"><br>
                             <label for="delivery_time">Time:</label>
                             <input type="time" name="delivery_time" class="time" placeholder="12:00"><br>

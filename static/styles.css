@@ -41,10 +41,6 @@ div {
   overflow: auto;
 }
 
-.time {
-  width: 50%;
-  height: 20%;
-}
 
 .form_main_div {
   display: flex;
@@ -124,8 +120,8 @@ input[id="dispatcher_phone"] {
   resize: none;
 }
 
-input[class="address"] {
-  width: 50%;
+input[class="address"],input[class="companies"], input[class="contacts"]  {
+  width: 90%;
   padding: 5px 10px;
   margin: 8px 0;
   box-sizing: border-box;
@@ -182,12 +178,16 @@ div[id="footer"] {
   margin-top: 2rem;
 }
 
+#add_run_row {
+  margin-top: 10px;
+}
+
 @media(max-width: 600px) {
   div[class="form_main_div"] {
     width: fit-content;
   }
 
-  input[class="address"] {
+  input[class="address"],input[class="companies"],input[class="contacts"] {
     width: 100%;
   }
 

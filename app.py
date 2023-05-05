@@ -14,7 +14,7 @@ from helpers import login_required
 from routes import bp as routing_bp
 from models.forms import LoginForm, RegisterForm
 from models.database import db, Person, Companies, PersonToCompany, Feedback
-#import creds 
+import creds 
 
 
 app = Flask(__name__)
@@ -254,10 +254,18 @@ def form():
         # Lists
         def clean_list(y):
             return [clean(x) for x in y]
+        pickup_companies = request.form.getlist("pickup_company")
+        pickup_companies = clean_list(pickup_companies)
+        pickup_contacts = request.form.getlist("pickup_contact")
+        pickup_contacts = clean_list(pickup_contacts)
         pickup_locations = request.form.getlist("pickup_location")
         pickup_locations = clean_list(pickup_locations)
         pickup_times = request.form.getlist("pickup_time")
         pickup_times = clean_list(pickup_times)
+        delivery_companies = request.form.getlist("delivery_company")
+        delivery_companies = clean_list(delivery_companies)
+        delivery_contacts = request.form.getlist("delivery_contact")
+        delivery_contacts = clean_list(delivery_contacts)
         delivery_locations = request.form.getlist("delivery_location")
         delivery_locations = clean_list(delivery_locations)
         delivery_times = request.form.getlist("delivery_time")
@@ -291,13 +299,13 @@ def form():
         print(comments_formatted)        
 
         # Create a new list of dictionaries {"Address":value, "Time":value} for pickup locations
-        pickup_tuples = list(zip_longest(pickup_locations, pickup_times, fillvalue="None"))
-        delivery_tuples =list(zip_longest(delivery_locations, delivery_times, fillvalue="None"))
+        pickup_tuples = list(zip_longest(pickup_companies, pickup_contacts, pickup_locations, pickup_times, fillvalue="None"))
+        delivery_tuples =list(zip_longest(delivery_companies, delivery_contacts, delivery_locations, delivery_times, fillvalue="None"))
       
         # Create a list of dictionaries with pu_address and pu_time
         pickup_details =[]
         for t in pickup_tuples:
-            temp_dict = {"pu_address":t[0],"pu_time":t[1]}
+            temp_dict = {"pu_company":t[0],"pu_contact":t[1],"pu_address":t[2],"pu_time":t[3]}
             pickup_details.append(temp_dict)    
         print ("pickup_details ↓")       
         print(pickup_details)
@@ -305,7 +313,7 @@ def form():
         # Create a new list of dictionaries {"Address":value, "Time":value} foe delivery locations
         delivery_details = []
         for t in delivery_tuples:
-            temp_dict = {"del_address":t[0],"del_time":t[1]}
+            temp_dict = {"del_company":t[0],"del_contact":t[1],"del_address":t[2],"del_time":t[3]}
             delivery_details.append(temp_dict)                
         print ("delivery_details ↓")    
         print(delivery_details)
