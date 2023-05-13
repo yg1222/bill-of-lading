@@ -21,14 +21,24 @@
         <td style="width: 50%; text-align: right;">
           <div class="logo">
             
-            {% if logo_size > 0 and not logo_ext %}
-              <img src="{{logo_path}}" style="max-width: 40%;" alt="">
-            {% elif not logo_size > 0 and logo_ext %}
-              <img src="{{logo_ext}}" style="max-width: 40%;" alt="">
-            {% elif logo_size > 0 and logo_ext %}
-              <img src="{{logo_path}}" style="max-width: 40%;" alt="">
+            {% if logo_size %}
+              {% if logo_size > 0 and not logo_ext %}
+                <img src="{{logo_path}}" style="max-width: 40%;" alt="">
+              {% endif %}
+            
+              {% elif not logo_size > 0 and logo_ext %}
+                <img src="{{logo_ext}}" style="max-width: 40%;" alt="">
+              {% endif %}
+
+              {% elif logo_size > 0 and logo_ext %}
+                <img src="{{logo_path}}" style="max-width: 40%;" alt="">
+              {% endif %}
+            
+
+            {% else $}
+              <img src="{{logo_ext}}" style="max-width: 40%;" alt="">   
             {% endif %}
-                      
+
           </div>
         </td>
       </tr>
