@@ -11,7 +11,6 @@ session/
 migrations/
 .vscode/
 logos/
-stripe_routes.py
 templates/cancel.html
 templates/checkout.html
 templates/payment.html
