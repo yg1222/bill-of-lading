@@ -6,7 +6,7 @@
         <div class="col-md-6" style="padding: 5px;">
             <div class="card">
                 <div class="card-header bg-dark text-white">
-                    <h3 class="text-center">Professional Plan</h3>
+                    <h3 class="text-center">Ship Flow Pro</h3>
                 </div>
                 <div class="card-body">
                     <h4>Features:</h4>
@@ -16,13 +16,42 @@
                         <li>Unlimited number of customer accounts</li>
                     </ul>
                     <p class="text-center">Price: $8/month</p>
-                    <div class="text-center">
-                        <button class="btn btn-primary">Subscribe</button>
-                    </div>
+                    <!-- <div class="text-center">
+                        <a href="https://www.paypal.com/webapps/billing/plans/subscribe?plan_id=P-3RK61887E82652310MRL5Q7Y">
+                            <button class="btn btn-primary">Subscribe</button>
+                        </a>
+                    </div> -->
+
+                    <!-- Paypal section -->
+                    <div id="paypal-button-container-P-3RK61887E82652310MRL5Q7Y"></div>
+                    <script src="https://www.paypal.com/sdk/js?client-id=AYDwGSNotZqnV6ztqUxS-ppfk-rsl1B0lTBsIchlsrz1A5r9V-2g25g5rU68KEmUVMPTwdggqPc-bpOG&vault=true&intent=subscription" data-sdk-integration-source="button-factory"></script>
+                    <script>
+                        paypal.Buttons({
+                            style: {
+                                shape: 'rect',
+                                color: 'black',
+                                layout: 'vertical',
+                                label: 'subscribe'
+                            },
+                            createSubscription: function(data, actions) {
+                                return actions.subscription.create({
+                                /* Creates the subscription */
+                                plan_id: 'P-3RK61887E82652310MRL5Q7Y'
+                                });
+                            },
+                            onApprove: function(data, actions) {
+                                alert(data.subscriptionID); // You can add optional success message for the subscriber here
+                            }
+                        }).render('#paypal-button-container-P-3RK61887E82652310MRL5Q7Y'); // Renders the PayPal button
+                        </script>
+                    <!-- End of Paypal section -->
+                    
                 </div>
             </div>
         </div>
+
         <br>
+
         <div class="col-md-6" style="padding: 5px;">
             <div class="card">
                 <div class="card-header bg-secondary text-white">

@@ -1,7 +1,9 @@
 commiter.sh
+migrater.sh
 __pycache__/
 dev_notes
 creds.py
+sandbox.py
 instance/users.db
 instance/
 flask_session/
@@ -9,3 +11,9 @@ session/
 migrations/
 .vscode/
 logos/
+stripe_routes.py
+templates/cancel.html
+templates/checkout.html
+templates/payment.html
+templates/success.html
+templates/portal.html

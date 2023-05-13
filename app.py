@@ -8,32 +8,53 @@ declarative_base, pisa, datetime, os, io, zip_longest, secure_filename, \
 generate_password_hash, check_password_hash, FlaskForm, StringField, \
 PasswordField, SubmitField, DataRequired, Regexp, Email, Length, \
 secure_filename, Migrate, uuid, DebugToolbarExtension, clean, \
-    Environment
+    Environment, Mail, Message, jsonify
 
-from helpers import login_required
+from helpers import login_required, empty_logos_dir, render_sf_load_sheet
 from routes import bp as routing_bp
+from stripe_routes import stripe_bp
 from models.forms import LoginForm, RegisterForm
-from models.database import db, Person, Companies, PersonToCompany, Feedback
+from models.database import db, Person, Companies, PersonToCompany, Feedback, Plan, Subscription, BolDocuments
+#import paypalrestsdk
+# import logging
+import json
+import stripe
 #import creds 
-
 
 app = Flask(__name__)
 
 app.debug = False
 # app.config["TEMPLATES_AUTO_RELOAD"] = True
 app.register_blueprint(routing_bp)
+#app.register_blueprint(stripe_bp)
 
+
+# Mail configuration
+# app.config["MAIL_SERVER"] = os.environ.get("MAIL_SERVER")
+# app.config["MAIL_PORT"] = 25
+# app.config["MAIL_USE_TLS"] = False
+# app.config["MAIL_USE_SSL"] = True
+# app.config["MAIL_DEBUG"] = app.debug
+# app.config["MAIL_USERNAME"] = os.environ.get("MAIL_USERNAME")
+# app.config["MAIL_PASSWORD"] = os.environ.get("MAIL_PASSWORD")
+# app.config["MAIL_DEFAULT_SENDER"] = os.environ.get("MAIL_DEFAULT_SENDER")
+# app.config["MAIL_MAX_EMAILS"] = None
+# app.config["MAIL_SUPPRESS_SEND"] = app.testing
+# app.config["MAIL_ASCII_ATTACHMENTS"] = False
+# mail = Mail(app)
+
+# Flask flask messages config
 app.config['FLASH_MESSAGES_OPTIONS'] = {'timeout': 3}
 app.config["SESSION_FILE_DIR"] = os.environ.get("SESSION_FILE_DIR")
 
+# SQL Alchemy config
 app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY")
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URL")
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
+# Upload folder config
 UPLOAD_FOLDER = 'logos/'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
-
 
 
 # Bind the db object from databse.py to this Flask application
@@ -56,16 +77,12 @@ login_manager.login_view = "login"
 for rule in app.url_map.iter_rules():
     print("route --> " + str(rule))
 
-
-
 # # Configure session to use filesystem (instead of signed cookies)
 # app.config["SESSION_PERMANENT"] = False
 # app.config["SESSION_TYPE"] = "filesystem"
 # app.config["USE_SESSION_FOR_NEXT"] = True
 # Session(app)
 
-
-    
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -85,13 +102,21 @@ def after_request(response):
     response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
     response.headers["Expires"] = 0
     response.headers["Pragma"] = "no-cache"
+
+
+    # TODO: Send mail on after request
+    # msg = Message("You have created a bill of lading pdf", sender="thatkalel@gmail.com",
+    # recipients=["thatkalel@gmail.com"])
+    # mail.send(msg)
+
     return response
 
 
 @app.route("/")
 def index():
     login_form = LoginForm()  
-    # print(current_user)    
+    print(current_user)    
+    print(current_user.stripe_customer_id)
     if current_user.is_authenticated:
         return render_template("form.html")
     else:
@@ -102,7 +127,8 @@ def index():
 @login_required
 def subscribe():
     print("Subscribe Request triggered")
-    return render_template("subscribe.html")
+    return ""
+    # return render_template("subscribe.html")
 
 
 @app.route("/login", methods = ['GET', 'POST'])
@@ -230,8 +256,9 @@ def logout():
 @app.route("/form", methods = ['GET', 'POST'])
 @login_required
 def form():
-    print("Request triggered")    
-    if request.method == "POST":       
+    print("Request triggered")       
+    if request.method == "POST":  
+          
         # Getting values from the form
         your_company_name = clean(str(request.form.get("your_company_name")))    
         your_company_address = clean(str(request.form.get("your_company_address")))
@@ -242,10 +269,8 @@ def form():
         run_date = clean(str(request.form.get("run_date")))
         dock = clean(str(request.form.get("dock")))
         po_number = clean(str(request.form.get("po_number")))
-        to_company = clean(str(request.form.get("to_company")))
-        bill_to = clean(str(request.form.get("bill_to")))
-        quantity = clean(str(request.form.get("quantity")))
-        weight = clean(str(request.form.get("weight")))
+        carrier = clean(str(request.form.get("carrier")))
+        bill_to = clean(str(request.form.get("bill_to")))        
         rate = clean(str(request.form.get("rate")))
         equipment_details = clean(str(request.form.get("equipment_details")))
         logo_ext = clean(str(request.form.get("logo_ext")), tags=[], attributes={}, protocols=['http', 'https'])
@@ -270,6 +295,10 @@ def form():
         delivery_locations = clean_list(delivery_locations)
         delivery_times = request.form.getlist("delivery_time")
         delivery_times = clean_list(delivery_times)
+        quantity = request.form.getlist("quantity")
+        quantity = clean_list(quantity)
+        weight = request.form.getlist("weight")
+        weight = clean_list(weight)
         comments = request.form.getlist("comments")
         comments = clean_list(comments)
         
@@ -301,7 +330,9 @@ def form():
         # Create a new list of dictionaries {"Address":value, "Time":value} for pickup locations
         pickup_tuples = list(zip_longest(pickup_companies, pickup_contacts, pickup_locations, pickup_times, fillvalue="None"))
         delivery_tuples =list(zip_longest(delivery_companies, delivery_contacts, delivery_locations, delivery_times, fillvalue="None"))
-      
+        qty_wgt_tuples = list(zip_longest(quantity, weight))
+
+
         # Create a list of dictionaries with pu_address and pu_time
         pickup_details =[]
         for t in pickup_tuples:
@@ -317,45 +348,84 @@ def form():
             delivery_details.append(temp_dict)                
         print ("delivery_details ↓")    
         print(delivery_details)
+
+        # Create a new list of dictionaries {"Quantity":value}
+        qty_wgt_details = []
+        for t in qty_wgt_tuples:
+            temp_dict = {"quantity":t[0], "weight": t[1]}
+            qty_wgt_details.append(temp_dict)                
+        print ("qty_wgt_details ↓")    
+        print(qty_wgt_details)
+
         
-        # TODO: Clean up details in such a way that if that the pickup maps to the delivery and handle blank addresses
         # Use itertoolz 
-        pickup_delivery_details_zipped = zip_longest(pickup_details, delivery_details, fillvalue="None")
+        pickup_delivery_details_zipped = zip_longest(pickup_details, delivery_details, qty_wgt_details, fillvalue="None")
         pickup_delivery_details = list(pickup_delivery_details_zipped)    
         print("pickup_delivery_details ↓")
-        print(pickup_delivery_details)     
+        print(pickup_delivery_details)
 
+        # Create document in DB
+       
+        
 
-        bol_html =  render_template("bill_of_lading.html", your_company_name=your_company_name,logo_path=logo_path,your_company_phone=your_company_phone, your_company_address=your_company_address, 
-                            dispatcher_name=dispatcher_name,dispatcher_email=dispatcher_email,dispatcher_phone=dispatcher_phone,
-                            run_date=run_date,dock=dock,to_company=to_company,bill_to=bill_to,quantity=quantity,weight=weight,rate=rate,equipment_details=equipment_details,
-                            pickup_delivery_details=pickup_delivery_details,comments=comments_formatted,po_number=po_number,
-                            logo_ext=logo_ext,logo_size=logo_size)
+        is_sharing = False
+        
+        # TODO: 
+        # if sharing:
+            # ask for guest's email
+            # search db for guest to get guest_id            
+            # warn host about privacy and search db for email and
+            # save to database with host_id and guest_id
+            
+            # send email to the guest
+            # when guest opens, a form is recreated and updates the record when done
+            # same thing happens with the host until host marks the record as complete
+           
 
-        bol_pdf = io.BytesIO()
-        pisa.CreatePDF(bol_html, dest=bol_pdf)
-        bol_pdf.seek(0)
-        # pdf_response.headers['Content-Type'] = 'application/pdf'
-        # pdf_response.headers['Content-Disposition'] = 'inline; filename=bill_of_lading.pdf'
+        # else:
+            # render pdf as usual
 
-        return send_file(bol_pdf, as_attachment=False, download_name='bill_of_lading.pdf')
-        #return pdf_response
-        #return bol_html
+        if request.form['action'] == "share":  
+            guest_email = clean(str(request.form.get("guest_email")))
+            print(guest_email)
 
-        # Emptying out the logos directory       
-        # List of files in directory
-        files_in_logos = os.listdir(logos_path)
+            guest = Person.query.filter_by(email=guest_email).first()
+            print("Guest -->  "+ str(guest))
 
-        # loop through each file in the directory and delete it
-        for file in files_in_logos:
-            file_path = os.path.join(logos_path, file)
-            os.remove(file_path)
+            if guest:
+                session_document = BolDocuments(host_id=current_user.id,guest_id=guest.id,broker_company_name=your_company_name,
+                    broker_company_address=your_company_address,broker_company_phone=your_company_phone,
+                    dispatcher_name=dispatcher_name,dispatcher_email=dispatcher_email,dispatcher_phone=dispatcher_phone,
+                    carrier_company_name=carrier,equipment_details=equipment_details,bill_to=bill_to,po_number=po_number,
+                    dock_number=dock,rate=rate,run_date=run_date,pickup_delivery_details=json.dumps(pickup_delivery_details),
+                    comments=json.dumps(comments_formatted))
+
+                # db.session.add(session_document)
+                # db.session.commit()
+                # print(session_document.id) # works, returns the record object
+                return "Should redirect to your portal page" # redirect to portal
+
+            else:
+                return "Unable to find the user with this email. Please check for spelling mistakes and verify with the user."
+
+        else:        
+            bol_html =  render_template("bill_of_lading.html", your_company_name=your_company_name,logo_path=logo_path,your_company_phone=your_company_phone, your_company_address=your_company_address, 
+                                dispatcher_name=dispatcher_name,dispatcher_email=dispatcher_email,dispatcher_phone=dispatcher_phone,
+                                run_date=run_date,dock=dock,carrier=carrier,bill_to=bill_to,rate=rate,equipment_details=equipment_details,
+                                pickup_delivery_details=pickup_delivery_details,comments=comments_formatted,po_number=po_number,
+                                logo_ext=logo_ext,logo_size=logo_size)
+
+            sf_load_sheet = render_sf_load_sheet(bol_html)
+            return sf_load_sheet
+
 
     elif request.method == "GET":
         if current_user.is_authenticated:
             return render_template("form.html")
         else:
             return render_template("login.html", form=LoginForm())
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)

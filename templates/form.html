@@ -22,13 +22,13 @@
 
         <form action="/form" method="post" enctype="multipart/form-data">
             <div id="company" class="tabcontent active">
-                <label for="your_company_name">You Company Name:</label><br>
+                <label for="your_company_name">Company / Broker Name:</label><br>
                 <input type="text" class="company_info" id="input1" name="your_company_name"><br>
 
-                <label for="input2">Your Company Address:</label><br>
+                <label for="input2">Address:</label><br>
                 <input type="text" class="company_info" id="input2" name="your_company_address"><br>
 
-                <label for="your_company_name">You Company Phone number:</label><br>
+                <label for="your_company_name">Phone number:</label><br>
                 <input type="text" class="company_info" id="input1" name="your_company_phone"><br>
                 
                 <div id="logo-div">
@@ -50,14 +50,29 @@
                 <label for="dispatcher_phone">Dispatcher's Phone#:</label><br>
                 <input type="phone" id="dispatcher_phone" name="dispatcher_phone"><br><br>
 
-                <label for="to_company">Carrier</label><br>
-                <input type="text" id="to_company" name="to_company"><br>
+                <label for="carrier">Carrier</label><br>
+                <input type="text" id="carrier" name="carrier"><br>
 
                 <label for="equipment_details">Equipment Details:</label><br>
-                <input type="text" name="equipment_details"><br>
+                <!-- <input type="text" name="equipment_details"> -->
+                <select name="equipment_details" class="eqp-dets">     
+                    <option value="Dump Truck">Dump Truck</option>               
+                    <option value="53 ft Dry Van" selected>53 ft Dry Van</option>
+                    <option value="Dry Van - less than 53ft">Dry Van - less than 53ft</option>                 
+                    <option value="26ft Straight Truck">26ft Straight Truck</option>
+                    <option value="Straight Truck - 20ft to 24ft">Straight Truck - 20ft to 24ft</option>
+                    <option value="Straight Truck - Less than 20ft">Straight Truck - Less than 20ft</option>
+                    <option value="Cube Van">Cube Van</option>
+                    <option value="Cargo Van">Cargo Van</option>
+                    <option value="Mini Van">Mini Van</option>
+                    <option value="SUV">SUV</option>
+                    <option value="Sedan">Sedan</option>
+                </select>
+                  
+                <br>
 
                 <label for="bill_to">Bill To:</label><br>
-                <input type="text" id="input7" name="bill_to"><br>
+                <input type="text" name="bill_to"><br>
             </div>
 
             <div id="run" class="tabcontent active">
@@ -67,22 +82,16 @@
                 <input type="text" name="po_number"><br>
 
                 <label for="dock">Dock #:</label><br>
-                <input type="text" id="input5" name="dock"><br>      
-
-                <label for="quantity">Quantity:</label><br>
-                <input type="text" id="input7" name="quantity"><br>
-
-                <label for="weight">Weight:</label><br>
-                <input type="text" id="input7" name="weight"><br>
+                <input type="text" name="dock"><br>                  
 
                 <label for="rate">Rate:</label><br>
-                <input type="text" id="input7" name="rate"><br>
+                <input type="text" name="rate"><br>
             </div>
 
-            <div id="location" class="tabcontent active" style="height: 400px; overflow: auto;">
+            <div id="location" class="tabcontent active" style="height: 450px; overflow: auto;">
 
                 <label for="run_date">Run Date:</label><br>
-                <input type="date" id="input4" name="run_date"><br><br>
+                <input type="date" name="run_date"><br><br>
                 <div name="pickup_div"></div>
                 
                 <table name="run_table" id="run_table">
@@ -92,21 +101,26 @@
                             <td>Delivery Details</td>
                         </tr>
                         <td>    
-                            <input type="text" id="pickup_company" class="companies" name="pickup_company" placeholder="Sending Company"> <br>
-                            <input type="text" class="contacts" name="pickup_contact" placeholder="Contact info"> <br>
-                            <input type="text" id="pickup_location" class="address" name="pickup_location" placeholder="Address"> <br>
+                            <input type="text" id="pickup_company" class="companies run-dets" name="pickup_company" placeholder="Sending Company"> <br>
+                            <input type="text" class="contacts run-dets" name="pickup_contact" placeholder="Contact info"> <br>
+                            <input type="text" id="pickup_location" class="address run-dets" name="pickup_location" placeholder="Address"> <br>
                             <label for="pickup_time">Time:</label>
                             <input type="time" name="pickup_time" class="time" placeholder="00:00"><br>
+                            <label for="quantity">Quantity:</label>
+                            <input type="text" class="run-dets" id="quantity" name="quantity" placeholder="Quantity">
                         </td>
                         <td>    
-                            <input type="text" id="delivery_company" class="companies" name="delivery_company" placeholder="Receiving Company"> <br>   
-                            <input type="text" class="contacts" name="delivery_contact" placeholder="Contact info"> <br>                     
-                            <input type="text" id="delivery_location" class="address" name="delivery_location" placeholder="Address"><br>
+                            <input type="text" id="delivery_company" class="companies run-dets" name="delivery_company" placeholder="Receiving Company"> <br>   
+                            <input type="text" class="contacts run-dets" name="delivery_contact" placeholder="Contact info"> <br>                     
+                            <input type="text" id="delivery_location" class="address run-dets" name="delivery_location" placeholder="Address"><br>
                             <label for="delivery_time">Time:</label>
                             <input type="time" name="delivery_time" class="time" placeholder="12:00"><br>
+                            <label for="weight">Weight:</label>
+                            <input type="text" class="run-dets" id="weight" name="weight" placeholder="Weight">
                         </td>
-                    </tr>
-                </table>
+                    </tr>                    
+                </table>                
+                
                 <button id="add_run_row" type="button">Add more</button>
                 
                 
@@ -123,10 +137,16 @@
 
             <div id="complete" class="tabcontent active complete">
                 <div>
-                    <div>
-                        Reminder: Fill in all the necessary details in the previous tabs before submitting.
-                    </div>
-                    <input type="submit" value="Submit" formtarget="_blank">
+                    <!-- <div>                        
+                        Share this record by email with your clients 
+                        <br><br>
+                        <input type="email" id="guest_email" name="guest_email"> 
+                    </div>                    
+                    <button type="submit" class="my-action-btn" name="action" value="share" formtarget="_blank">Share with a Client</button>  
+                    <br><br>
+                    Or simply -->
+                    <br>
+                    <button type="submit" class="my-action-btn" name="action" value="generate" formtarget="_blank">Generate SF Load Sheet</button>
                 </div>
             </div>            
         </form>

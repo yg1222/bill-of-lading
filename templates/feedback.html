@@ -20,7 +20,7 @@
       <div class="row justify-content-center">
         <div class="col-md-8 mx-auto">
           
-          <form action="{{ url_for('main.feedback') }}" method="post">
+          <form action="{{ url_for('routes_r.feedback') }}" method="post">
             {{ form.csrf_token }}
             <div class="form-group">
               {{ form.company_name() }}          

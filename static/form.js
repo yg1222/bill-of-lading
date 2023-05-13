@@ -79,6 +79,28 @@ function openTab(evt, tabName) {
     dlTime.setAttribute("name","delivery_time");
     dlTime.setAttribute("class","time");
 
+
+
+     // Creating and appending the bottom details like quantity and weight which
+    // apply to the whole row
+    quantity = document.createElement("input");
+    qtyLabel = document.createElement("label");
+    weight = document.createElement("input");
+    wgtLable = document.createElement("label");
+    qtyLabel.textContent = "Quantity:";
+    wgtLable.textContent = "Weight:";
+    quantity.setAttribute("type", "text");
+    quantity.setAttribute("name","quantity");
+    quantity.setAttribute("id","quantity");
+    quantity.setAttribute("placeholder","Quantity");
+    weight.setAttribute("type", "text");
+    weight.setAttribute("name","weight");
+    weight.setAttribute("id","weight");
+    weight.setAttribute("placeholder","Weight");
+
+
+
+
     // Insert/Display the input element to the table data
     puTD.appendChild(document.createElement("hr"));
     puTD.appendChild(puCompany);
@@ -89,6 +111,10 @@ function openTab(evt, tabName) {
     puTD.appendChild(document.createElement("br"));
     puTD.appendChild(lblTimePu);
     puTD.appendChild(puTime);
+    puTD.appendChild(document.createElement("br"));
+    // Appending the Quantity field
+    puTD.appendChild(qtyLabel);
+    puTD.appendChild(quantity);
 
     dlTD.appendChild(document.createElement("hr"));
     dlTD.appendChild(dlCompany);
@@ -99,10 +125,18 @@ function openTab(evt, tabName) {
     dlTD.appendChild(document.createElement("br"));
     dlTD.appendChild(lblTimeDl);
     dlTD.appendChild(dlTime);
+    dlTD.appendChild(document.createElement("br"));
+    // Appending the Weight field
+    dlTD.appendChild(wgtLable);
+    dlTD.appendChild(weight);
+   
+    
+    
+
 
     // Insert the table data into the row
     additionalRunRow.appendChild(puTD);
-    additionalRunRow.appendChild(dlTD);    
+    additionalRunRow.appendChild(dlTD);
     
     console.log(additionalRunRow);
     // Append th additionalRow to the run_table

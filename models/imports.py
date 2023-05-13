@@ -1,12 +1,13 @@
 from flask import Flask, flash, render_template, redirect, request, \
      session, make_response, send_file, url_for, flash, send_from_directory, \
-        current_app, Blueprint, render_template
+        current_app, Blueprint, render_template, jsonify
 from flask_login import UserMixin, login_user, LoginManager, login_required, \
     current_user, logout_user
 from flask_session import Session
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_debugtoolbar import DebugToolbarExtension
+from flask_mail import Mail, Message
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base

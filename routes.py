@@ -5,7 +5,7 @@ from models.imports import Blueprint, render_template, request, current_app, \
 from models.database import db, Companies, Feedback
 
 
-bp = Blueprint("main", __name__)
+bp = Blueprint("routes_r", __name__)
 
 
 @bp.route("/feedback", methods = ['GET', 'POST'])
