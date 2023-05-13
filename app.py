@@ -19,7 +19,7 @@ from models.database import db, Person, Companies, PersonToCompany, Feedback, Pl
 # import logging
 import json
 import stripe
-#import creds 
+# import creds 
 
 app = Flask(__name__)
 
