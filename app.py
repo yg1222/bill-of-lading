@@ -12,14 +12,14 @@ secure_filename, Migrate, uuid, DebugToolbarExtension, clean, \
 
 from helpers import login_required, empty_logos_dir, render_sf_load_sheet
 from routes import bp as routing_bp
-from stripe_routes import stripe_bp
+#from stripe_routes import stripe_bp
 from models.forms import LoginForm, RegisterForm
 from models.database import db, Person, Companies, PersonToCompany, Feedback, Plan, Subscription, BolDocuments
 #import paypalrestsdk
 # import logging
 import json
-import stripe
-# import creds 
+#import stripe
+#import creds 
 
 app = Flask(__name__)
 
@@ -116,7 +116,7 @@ def after_request(response):
 def index():
     login_form = LoginForm()  
     print(current_user)    
-    print(current_user.stripe_customer_id)
+    #print(current_user.stripe_customer_id)
     if current_user.is_authenticated:
         return render_template("form.html")
     else:
