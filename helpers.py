@@ -4,7 +4,7 @@ from flask import redirect, url_for, request
 from models.imports import Environment, io, pisa, send_file
 import os
 
-app.config['UPLOAD_FOLDER'] = 'logos/'
+UPLOAD_FOLDER = 'logos/'
 
 print("Helpers imported")
 

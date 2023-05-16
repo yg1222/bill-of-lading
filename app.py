@@ -28,8 +28,7 @@ app.debug = False
 app.register_blueprint(routing_bp)
 #app.register_blueprint(stripe_bp)
 
-
-UPLOAD_FOLDER = os.environ.get("UPLOAD_FOLDER")
+UPLOAD_FOLDER = 'logos/'
 
 # Mail configuration
 # app.config["MAIL_SERVER"] = os.environ.get("MAIL_SERVER")
