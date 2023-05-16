@@ -22,15 +22,19 @@ def login_required(f):
 
 def empty_logos_dir():
     # Emptying out the logos directory       
-    # List of files in directory       
-    files_list = os.listdir(UPLOAD_FOLDER)
-    print("Emptying out the logos folder -> " + str(files_list))
+    # List of files in directory    
+    try:      
+        files_list = os.listdir(UPLOAD_FOLDER)
+        print("Emptying out the logos folder -> " + str(files_list))
 
-    # loop through each file in the directory and delete it
-    if len(files_list) != 0:
-        for file in files_list:
-            file_path = os.path.join(UPLOAD_FOLDER, file)
-            os.remove(file_path)
+        # loop through each file in the directory and delete it
+        if len(files_list) != 0:
+            for file in files_list:
+                file_path = os.path.join(UPLOAD_FOLDER, file)
+                os.remove(file_path)
+    except FileNotFoundError:
+        print("FileNotFoundError occured")
+
 
 
 def render_sf_load_sheet(bol_html):
