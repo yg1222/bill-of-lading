@@ -4,6 +4,8 @@ from flask import redirect, url_for, request
 from models.imports import Environment, io, pisa, send_file
 import os
 
+app.config['UPLOAD_FOLDER'] = 'logos/'
+
 print("Helpers imported")
 
 def helpers_test():
@@ -20,8 +22,7 @@ def login_required(f):
 
 def empty_logos_dir():
     # Emptying out the logos directory       
-    # List of files in directory 
-    UPLOAD_FOLDER = os.environ.get("UPLOAD_FOLDER")   
+    # List of files in directory       
     files_list = os.listdir(UPLOAD_FOLDER)
     print("Emptying out the logos folder -> " + str(files_list))
 
