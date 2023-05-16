@@ -26,9 +26,10 @@ def empty_logos_dir():
     print("Emptying out the logos folder -> " + str(files_list))
 
     # loop through each file in the directory and delete it
-    for file in files_list:
-        file_path = os.path.join(UPLOAD_FOLDER, file)
-        os.remove(file_path)
+    if len(files_list) != 0:
+        for file in files_list:
+            file_path = os.path.join(UPLOAD_FOLDER, file)
+            os.remove(file_path)
 
 
 def render_sf_load_sheet(bol_html):
