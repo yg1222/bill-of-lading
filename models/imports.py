@@ -15,6 +15,7 @@ from xhtml2pdf import pisa
 from datetime import datetime
 from bleach import clean
 
+import logging
 import io
 import os
 

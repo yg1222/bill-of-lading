@@ -1,6 +1,6 @@
 # Bill of Lading Generator
 
-from models.imports import Flask, flash, render_template, redirect, request, \
+from models.imports import logging, Flask, flash, render_template, redirect, request, \
 session, make_response, send_file, url_for, flash, send_from_directory, \
 current_app, UserMixin, login_user, LoginManager, login_required, \
 current_user, logout_user, Session, SQLAlchemy, ForeignKey, relationship, \
@@ -24,6 +24,7 @@ import json
 app = Flask(__name__)
 
 app.debug = False
+app.logger.setLevel(logging.INFO)
 # app.config["TEMPLATES_AUTO_RELOAD"] = True
 app.register_blueprint(routing_bp)
 #app.register_blueprint(stripe_bp)
@@ -308,16 +309,16 @@ def form():
             # Attempting to save the logo file in the logos dir
             logo = request.files["logo"]
             filename_unformatted = secure_filename(logo.filename)
-            print("filename_unformatted: " + str(filename_unformatted))
+            app.logger.info("filename_unformatted: " + str(filename_unformatted))
             # Setting unique filenames
             filename = str(uuid.uuid1()) + "_" + filename_unformatted 
-            print("filename: "+ str(filename))
+            app.logger.info("filename: "+ str(filename))
             logo_path = os.path.join(UPLOAD_FOLDER, filename)
-            print(logo_path)
+            app.logger.info(logo_path)
             logo.save(logo_path)
-            print(logo_path) 
+            app.logger.info(logo_path) 
             logo_size = os.path.getsize(logo_path)
-            print(f"The size of {logo_path} is {logo_size} bytes.")
+            app.logger.info(f"The size of {logo_path} is {logo_size} bytes.")
         except FileNotFoundError:
             print("Error getting logo. Caught FileNotFoundError")
         except IsADirectoryError:
