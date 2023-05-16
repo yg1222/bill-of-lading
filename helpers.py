@@ -2,6 +2,7 @@ from functools import wraps
 from flask_login import current_user
 from flask import redirect, url_for, request
 from models.imports import Environment, io, pisa, send_file
+import os
 
 print("Helpers imported")
 
@@ -19,7 +20,8 @@ def login_required(f):
 
 def empty_logos_dir():
     # Emptying out the logos directory       
-    # List of files in directory    
+    # List of files in directory 
+    UPLOAD_FOLDER = os.environ.get("UPLOAD_FOLDER")   
     files_list = os.listdir(UPLOAD_FOLDER)
     print("Emptying out the logos folder -> " + str(files_list))
 

@@ -59,13 +59,18 @@ def portal():
         return "Initiate Update record"
     
     elif request.method == 'GET':
-        # Create a list of host records
+        # Create a list of host and guest records
         host_records = BolDocuments.query.filter_by(host_id=current_user.id).all()
+        guest_records = BolDocuments.query.filter_by(guest_id=current_user.id).all()
+        print("host below")
         print(host_records)
+        print ("guest below")
+        print(guest_records)
         
         # Creates a list of forms with the data from each from the host_records list
         host_forms = [RecordForm(obj=host_record) for host_record in host_records]
-
+        guest_forms = [RecordForm(obj=guest_record) for guest_record in guest_records]
         # Create a list of guest records
 
-        return render_template("portal.html", form=record_form, host_forms=host_forms)
+        return render_template("portal.html", form=record_form, host_forms=host_forms, 
+            guest_forms=guest_forms)

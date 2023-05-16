@@ -80,7 +80,7 @@ class Profile(FlaskForm):
 
 
 class RecordForm(FlaskForm):    
-    record_id = StringField('Document ID',
+    id = StringField('Document ID',
     render_kw={"class": "form-control col-sm-4"})
     
     host_id = StringField('Host ID',

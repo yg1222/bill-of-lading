@@ -29,6 +29,8 @@ app.register_blueprint(routing_bp)
 #app.register_blueprint(stripe_bp)
 
 
+UPLOAD_FOLDER = os.environ.get("UPLOAD_FOLDER")
+
 # Mail configuration
 # app.config["MAIL_SERVER"] = os.environ.get("MAIL_SERVER")
 # app.config["MAIL_PORT"] = 25
@@ -52,9 +54,7 @@ app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY")
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URL")
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-# Upload folder config
-UPLOAD_FOLDER = 'logos/'
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
 
 
 # Bind the db object from databse.py to this Flask application
@@ -103,7 +103,7 @@ def after_request(response):
     response.headers["Expires"] = 0
     response.headers["Pragma"] = "no-cache"
 
-
+    empty_logos_dir()
     # TODO: Send mail on after request
     # msg = Message("You have created a bill of lading pdf", sender="thatkalel@gmail.com",
     # recipients=["thatkalel@gmail.com"])
@@ -313,7 +313,7 @@ def form():
             # Setting unique filenames
             filename = str(uuid.uuid1()) + "_" + filename_unformatted 
             print("filename: "+ str(filename))
-            logo_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            logo_path = os.path.join(UPLOAD_FOLDER, filename)
             print(logo_path)
             logo.save(logo_path)
             print(logo_path) 
@@ -400,9 +400,9 @@ def form():
                     dock_number=dock,rate=rate,run_date=run_date,pickup_delivery_details=json.dumps(pickup_delivery_details),
                     comments=json.dumps(comments_formatted))
 
-                # db.session.add(session_document)
-                # db.session.commit()
-                # print(session_document.id) # works, returns the record object
+                db.session.add(session_document)
+                db.session.commit()
+                print(session_document.id) # works, returns the record object
                 return "Should redirect to your portal page" # redirect to portal
 
             else:

@@ -10,7 +10,6 @@ flask_session/
 session/
 migrations/
 .vscode/
-logos/
 templates/cancel.html
 templates/checkout.html
 templates/payment.html
