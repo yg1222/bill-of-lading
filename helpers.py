@@ -6,6 +6,7 @@ import os
 
 UPLOAD_FOLDER = 'logos/'
 
+
 print("Helpers imported")
 
 def helpers_test():
@@ -33,7 +34,7 @@ def empty_logos_dir():
                 file_path = os.path.join(UPLOAD_FOLDER, file)
                 os.remove(file_path)
     except FileNotFoundError:
-        print("FileNotFoundError occured")
+        print("FileNotFoundError occured - possible empty logos directory")
 
 
 

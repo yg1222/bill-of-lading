@@ -16,12 +16,16 @@ from routes import bp as routing_bp
 from models.forms import LoginForm, RegisterForm
 from models.database import db, Person, Companies, PersonToCompany, Feedback, Plan, Subscription, BolDocuments
 #import paypalrestsdk
-# import logging
+import logging
 import json
 #import stripe
 #import creds 
 
+#from sandbox import send_email
+
 app = Flask(__name__)
+
+
 
 app.debug = False
 app.logger.setLevel(logging.INFO)
@@ -92,6 +96,7 @@ def load_user(user_id):
 #Line below only required once, when creating DB. 
 #db.create_all()
 with app.app_context():    
+    #send_email()
     db.create_all()
     print("executed in context")
 
@@ -315,10 +320,13 @@ def form():
             app.logger.info("filename: "+ str(filename))
             logo_path = os.path.join(UPLOAD_FOLDER, filename)
             app.logger.info(logo_path)
-            logo.save(logo_path)
-            app.logger.info(logo_path) 
-            logo_size = os.path.getsize(logo_path)
-            app.logger.info(f"The size of {logo_path} is {logo_size} bytes.")
+            if logo is not None:
+                logo.save(logo_path)
+                app.logger.info(logo_path) 
+                logo_size = os.path.getsize(logo_path)
+                app.logger.info(f"The size of {logo_path} is {logo_size} bytes.")
+            else:
+                app.logger.info("Not a valid file")
         except FileNotFoundError:
             print("Error getting logo. Caught FileNotFoundError")
         except IsADirectoryError:

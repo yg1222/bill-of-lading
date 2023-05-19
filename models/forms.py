@@ -1,7 +1,8 @@
 
 
 from .imports import FlaskForm, StringField, PasswordField, PasswordField, \
-    SubmitField, DataRequired, Regexp, Email, Length, TextAreaField, SelectField
+    SubmitField, DataRequired, Regexp, Email, Length, TextAreaField, SelectField, \
+        EqualTo
 
 # Login and register form
 class LoginForm(FlaskForm):
@@ -143,5 +144,12 @@ class RecordForm(FlaskForm):
     is_completed = SelectField('Is Completed', 
     choices=[('0', 'False'), ('1', 'True')])
     
-    update = SubmitField('Update this Document', render_kw={"class":"btn sign-up"})
+    update = SubmitField('Update this Document', 
+    render_kw={"class":"btn sign-up"})
 
+class PasswordResetForm(FlaskForm):
+    password = PasswordField('Password', validators=[DataRequired()], 
+    render_kw={"class": "form-control col-sm-4", "placeholder":"Password"})
+    confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')], 
+    render_kw={"class": "form-control col-sm-4", "placeholder":"Confirm Password"})
+    submit = SubmitField('Reset Password', render_kw={"class":"btn sign-up"})
