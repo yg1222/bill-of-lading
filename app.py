@@ -20,7 +20,7 @@ from models.database import db, Person, Companies, PersonToCompany, Feedback, Pl
 import logging
 import json
 #import stripe
-import creds 
+#import creds 
 
 #from sandbox import send_email
 
