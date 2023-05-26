@@ -7,13 +7,23 @@
 
 {% block content %}
 
-<div class="box">
-	<h1>Ship Flow</h1>
-
-  <div class="d-flex justify-content-center">
-  <a href="{{ url_for('form') }}" class="btn btn-generate-pdf">Generage Bill of Lading PDF</a>
+<div class="jumbotron">
+  <div class="container">
+    <h1 class="display-4">Effortlessly Generate Professional Bill of Lading PDFs and Load Sheets</h1>
+    <p class="lead">Ship Flow</p>
+  </div>
 </div>
-   
+
+<div class="home-container">
+  <div class="load-sheet-frame">
+    <img class="load-sheet-img" src="{{ url_for('static', filename='load_sheet.jpg')}}" alt="SF App Screenshot">
+  </div>
+
+  <div class="phone-frame">
+    <div class="screen">
+      <img src="{{ url_for('static', filename='mobile.png')}}" alt="SF App Screenshot">
+    </div>
+  </div>   
 </div>
 
 {% endblock %}

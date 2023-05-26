@@ -8,7 +8,8 @@ declarative_base, pisa, datetime, os, io, zip_longest, secure_filename, \
 generate_password_hash, check_password_hash, FlaskForm, StringField, \
 PasswordField, SubmitField, DataRequired, Regexp, Email, Length, \
 secure_filename, Migrate, uuid, DebugToolbarExtension, clean, \
-    Environment, Mail, Message, jsonify
+    Environment, Mail, Message, jsonify, URLSafeTimedSerializer, SignatureExpired, \
+        BadTimeSignature
 
 from helpers import login_required, empty_logos_dir, render_sf_load_sheet
 from routes import bp as routing_bp
@@ -19,7 +20,7 @@ from models.database import db, Person, Companies, PersonToCompany, Feedback, Pl
 import logging
 import json
 #import stripe
-#import creds 
+import creds 
 
 #from sandbox import send_email
 
@@ -48,6 +49,16 @@ UPLOAD_FOLDER = 'logos/'
 # app.config["MAIL_SUPPRESS_SEND"] = app.testing
 # app.config["MAIL_ASCII_ATTACHMENTS"] = False
 # mail = Mail(app)
+app.config['MAIL_SERVER'] = os.environ.get("MAIL_SERVER")
+app.config['MAIL_PORT'] = int(os.environ.get("MAIL_PORT"))
+app.config['MAIL_USE_TLS'] = (os.environ.get("MAIL_USE_TLS")).lower() == 'true'
+app.config['MAIL_USE_SSL'] = (os.environ.get("MAIL_USE_SSL")).lower() == 'true'
+app.config['MAIL_USERNAME'] = os.environ.get("MAIL_USERNAME")
+app.config['MAIL_PASSWORD'] = os.environ.get("MAIL_PASSWORD")
+app.config['MAIL_DEBUG'] = (os.environ.get("MAIL_DEBUG")).lower() == 'true'
+app.config['MAIL_SUPPRESS_SEND'] = (os.environ.get("MAIL_SUPPRESS_SEND")).lower() == 'true'
+app.config['MAIL_DEFAULT_SENDER'] = ("ShipFlow.xyz", "info@shipflow.xyz")
+mail = Mail(app)
 
 # Flask flask messages config
 app.config['FLASH_MESSAGES_OPTIONS'] = {'timeout': 3}
@@ -59,7 +70,8 @@ app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URL")
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 
-
+# Initializing serializer
+s = URLSafeTimedSerializer(app.config['SECRET_KEY'])
 
 # Bind the db object from databse.py to this Flask application
 db.init_app(app)
@@ -122,10 +134,7 @@ def index():
     login_form = LoginForm()  
     print(current_user)    
     #print(current_user.stripe_customer_id)
-    if current_user.is_authenticated:
-        return render_template("form.html")
-    else:
-        return render_template("login.html", form=login_form)
+    return render_template('index.html')
 
 
 @app.route("/subscribe", methods = ['GET', 'POST'])
@@ -139,51 +148,52 @@ def subscribe():
 @app.route("/login", methods = ['GET', 'POST'])
 def login(): 
     login_form = LoginForm() 
-    if request.method == "POST":        
+    if request.method == "POST":       
         if login_form.validate_on_submit():
-            email = request.form.get("email")
-            password = request.form.get("password")
-            print("Login query \u2193 \n"+request.remote_addr + " - " + 
-            str(datetime.now()) + " \u2193 \n"+  email)
-        
-            #check_password_hash(pwhash, password) 
-            # where pwhash == hash in db, password == arguement password, returns true if matched
-            if Person.query.filter_by(email=email).count() == 1:
-                user = Person.query.filter_by(email=email).first()
-                #print(Person.query.all())
-            else:
-                user = None
-
-            # Valid email, there is one Person with this email in the DB
-            if user:
-                user_pwhash = user.password_hash
-                person_id = user.id
-                first_name = user.first_name
-                arg_hash = check_password_hash(user_pwhash, password)
-                print("Found email in database")
-                #print(user)
-                print("Password match == " + str(arg_hash))            
-                # If authenticated, remember which user has logged in
-                if arg_hash == True:
-                    is_logged_in = login_user(user)
-                    print("Is logged in check: " + str(is_logged_in))
-                    print("current_user.id "+ str(current_user.id))
-                    flash('Logged in successfully.', "success")
-                    print("? user.is_authenticated: " +str(user.is_authenticated))
-                    return render_template("form.html", first_name=first_name)
-                else:
-                    # Password mismatch. FLash("Invalid email or password")
-                    flash("Invalid email or password", "warning")
-                    return render_template("login.html",form=login_form)
+            if login_form.login.data:
+                email = request.form.get("email")
+                password = request.form.get("password")
+                print("Login query \u2193 \n"+request.remote_addr + " - " + 
+                str(datetime.now()) + " \u2193 \n"+  email)
             
-            elif not user:
-                # No email in db. FLash("Invalid email or password")
-                flash('Invalid email or password.', "warning")
-                print("No person in DB with this email. Redirect to Registration")
-                # print("Print is_authenticated ")
-                # print(user.is_authenticated)
-                return render_template("login.html",form=login_form)
-            print("Login Request triggered")
+                #check_password_hash(pwhash, password) 
+                # where pwhash == hash in db, password == arguement password, returns true if matched
+                if Person.query.filter_by(email=email).count() == 1:
+                    user = Person.query.filter_by(email=email).first()
+                    #print(Person.query.all())
+                else:
+                    user = None
+
+                # Valid email, there is one Person with this email in the DB
+                if user:
+                    user_pwhash = user.password_hash
+                    person_id = user.id
+                    first_name = user.first_name
+                    arg_hash = check_password_hash(user_pwhash, password)
+                    print("Found email in database")
+                    #print(user)
+                    print("Password match == " + str(arg_hash))            
+                    # If authenticated, remember which user has logged in
+                    if arg_hash == True:
+                        is_logged_in = login_user(user)
+                        print("Is logged in check: " + str(is_logged_in))
+                        print("current_user.id "+ str(current_user.id))
+                        flash('Logged in successfully.', "success")
+                        print("? user.is_authenticated: " +str(user.is_authenticated))
+                        return render_template("form.html", first_name=first_name)
+                    else:
+                        # Password mismatch. FLash("Invalid email or password")
+                        flash("Invalid email or password", "warning")
+                        return render_template("login.html",form=login_form)
+                
+                elif not user:
+                    # No email in db. FLash("Invalid email or password")
+                    flash('Invalid email or password.', "warning")
+                    print("No person in DB with this email. Redirect to Registration")
+                    # print("Print is_authenticated ")
+                    # print(user.is_authenticated)
+                    return render_template("login.html",form=login_form)
+                print("Login Request triggered")
 
         else:
             flash("Unable to sign this user", "warning")
@@ -197,13 +207,38 @@ def login():
         else:
             return render_template("login.html", form=LoginForm())
 
+  
+@app.route('/verify_email/<verify_token>')
+def verify_email(verify_token):
+  try:    
+    email = s.loads(verify_token, salt='verify-email', max_age=300)
+    # Verify the user with "email" as their email in the Database  
+    if Person.query.filter_by(email=email).count() == 1:
+        user_to_verify = Person.query.filter_by(email=email).first()
+        print("found verification email in db. checking if it matches current user")
+        print("matches current user") # Note if they use a different browser, it won't match. Consider not matching. Lookup best practices
+        # Update db
+        user_to_verify.is_verified = True
+        db.session.commit()
+        return render_template("notification_templates/email_verified.html")
+    else:
+        print("did not find verification email in db")
+
+  except SignatureExpired:
+    print("SignatureExpired")
+    return "<h1>Signature expired.</h1> \n <input type='submit' name='resend'>Resend Email?</input>"
+  except BadTimeSignature:
+    print("BadTimeSignature")
+    return "<h2>The url does not match. Try clicking on the link in the email you received.</h2> <h2>If you choose to copy and paste the link, make sure it does not include any spaces.</h2>"
+  
+  return url_for('index')
+
 
 @app.route("/register", methods = ['GET', 'POST'])
 def register():
     register_form = RegisterForm()
     if request.method == "POST":
         if register_form.validate_on_submit():
-
             print("Register Request triggered")   
             # Get registration data
             first_name = request.form.get("first_name")
@@ -212,33 +247,56 @@ def register():
             email = request.form.get("email").lower()
             # display_name = request.form.get("display_name")
             password_hash = generate_password_hash(request.form.get("password"), method='pbkdf2:sha256', salt_length=8)
-            #print(password_hash)
-
+            
             # SQL: write data into db
             # Set data
             person_update = Person(username=username, first_name=first_name,last_name=last_name,
                                 email=email, password_hash=password_hash)
             
             # Checking database before registering
+            # If user already exists
             if Person.query.filter_by(email=email).count() >0:
                 print(first_name + " already exists")
                 flash("Oops! "+ email + " already exists. If this is you, please log in.", "warning")            
                 return render_template("register.html",form=register_form)
-
+            # If new user. Registering
             elif Person.query.filter_by(email=email).count() == 0:
                 print(Person.query.filter_by(email=email).count())
-                flash("Welcome, " +first_name + ". You've signed up successfully.", "success")
+                flash("Welcome, " +first_name + ". You've signed up successfully. We've sent you an email. Please verify your email.", "success")
                 print(first_name + " did not exist. Registering user")
                 db.session.add(person_update)
                 db.session.commit()
                 user = person_update
-                is_logged_in = login_user(user)
+                is_logged_in = login_user(user)                
+
+                # Email Verification process
+                token = s.dumps(email, salt='verify-email')
+                link = url_for('verify_email', verify_token=token, _external=True)                
+                print(link)
+                # Email the link
+                # # Create and send the verification email                
+                try:
+                    print(email)
+                    print(app.config['MAIL_DEFAULT_SENDER'])
+                    msg = Message('Email Verification', recipients=[email])
+                    msg.html = render_template('email_templates/verification_email.html', verification_link=link)
+                    msg.body = "Thank you for registering! \nPlease use the following link to verify your email address:\n\n" + link + "\n\nIf you did not register for an account, please ignore this email."
+                    print(msg.body)
+                    print("Msg body: "+str(msg.body))
+                    mail.send(msg)
+                    print ("Verification email sent")
+                except Exception as e:
+                    print("Email failed to send: "+ str(e))
+
                 return render_template("form.html")
             
             else:
                 flash("Unable to Register this user", "warning")
                 print("Unable to Register this user")
                 return render_template("register.html",form=register_form)
+
+            
+        
 
         else:
             flash("Unable to Register this user", "warning")

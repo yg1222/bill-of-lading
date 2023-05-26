@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 {% block content %}
 
-<div class="box container">
+<div class="box container sf-form-div">
     <h1>Login</h1>
     <form action="{{ url_for('login') }}" method="post">
         {{ form.csrf_token }}
@@ -17,9 +17,17 @@
             <span style="color: rgba(163, 60, 0, 0.423);">{{ error }}</span>
           {% endfor %}
         </div>
-        <div>
-          {{ form.submit() }}
+
+        <div class="button-container">
+          <div class="button-div">
+            {{ form.login() }} 
+          </div>
+          <div class="button-div">
+            <a class="btn btn-lg btn-grey btn-secondary" href="{{ url_for('routes_r.forgot_password') }}">Forgot Password?</a>
+          </div>
         </div>
+        
+
     </form>
 </div>
 

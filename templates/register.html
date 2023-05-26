@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 {% block content %}
 
-<div class="box container">
+<div class="box container sf-form-div">
     <h1>Register</h1>
     <form action="{{ url_for('register') }}" method="post">
         {{ form.csrf_token }}
@@ -35,7 +35,7 @@
             <span style="color: red;">[{{ error }}]</span>
           {% endfor %}
         </div>
-        <div>
+        <div class="button-div">
           {{ form.submit() }}
         </div>
     </form>

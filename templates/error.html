@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+
+<!-- Override layout template using jinja for example, 
+  override the title by inserting content 
+  into % block title %TItle content% endblock % -->
+
+
+{% block content %}
+
+<div class="box">
+	<h1>Ship Flow</h1>
+
+  <div class="d-flex justify-content-center">
+  Error {{error_type}}. Please return to your home page.
+</div>
+   
+</div>
+
+{% endblock %}

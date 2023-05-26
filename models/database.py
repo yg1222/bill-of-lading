@@ -15,6 +15,7 @@ class Person(UserMixin, db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, onupdate=datetime.utcnow)
     password_hash = db.Column(db.String(1000))
+    is_verified = db.Column(db.Boolean, default=False)
     stripe_customer_id = db.Column(db.String(100))  
     
     def __repr__(self):

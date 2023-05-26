@@ -69,11 +69,14 @@
 
           {% elif current_user.is_authenticated %}
           <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('form') }}">Home</a>
+            <a class="nav-link" href="{{ url_for('index') }}">Home</a>
           </li>
-          <!-- <li>
-            <a class="nav-link" href="{{ url_for('form') }}">Profile</a>  
-          </li> -->
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('form') }}">BOL app</a>
+          </li>
+          <li>
+            <a class="nav-link" href="{{ url_for('routes_r.profile') }}">Profile</a>  
+          </li>
           <li>
             <a class="nav-link" href="{{ url_for('routes_r.feedback') }}">Feedback</a>  
           </li>

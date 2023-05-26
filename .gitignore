@@ -3,6 +3,7 @@ migrater.sh
 __pycache__/
 dev_notes
 creds.py
+config.py
 sandbox.py
 instance/users.db
 instance/
@@ -15,3 +16,4 @@ templates/checkout.html
 templates/payment.html
 templates/success.html
 templates/portal.html
+wsgi.py

@@ -1,8 +1,9 @@
 
+from markupsafe import Markup
 
 from .imports import FlaskForm, StringField, PasswordField, PasswordField, \
     SubmitField, DataRequired, Regexp, Email, Length, TextAreaField, SelectField, \
-        EqualTo
+        EqualTo, InputRequired, url_for
 
 # Login and register form
 class LoginForm(FlaskForm):
@@ -10,7 +11,8 @@ class LoginForm(FlaskForm):
     render_kw={"class": "form-control col-sm-4", "placeholder":"Email"}, )
     password = PasswordField('Password', validators=[DataRequired()], 
     render_kw={"class": "form-control col-sm-4", "placeholder":"Password"} )
-    submit = SubmitField('Sign in', render_kw={"class":"btn sign-up"})
+    login = SubmitField('Sign in', render_kw={"class":"btn btn-lg btn-light"})
+    
 
 class RegisterForm(FlaskForm):    
     first_name = StringField('First Name', validators=[DataRequired(), Length(min=1, max=50)],
@@ -23,7 +25,15 @@ class RegisterForm(FlaskForm):
     render_kw={"class": "form-control col-sm-4", "placeholder":"Email"}, )
     password = PasswordField('Password', validators=[DataRequired(), Length(min=6)], 
     render_kw={"class": "form-control col-sm-4", "placeholder":"Password"} )
-    submit = SubmitField('Sign up', render_kw={"class":"btn sign-up"})
+    submit = SubmitField('Sign up', render_kw={"class":"btn btn-lg btn-light btn-primary"})
+
+
+class ForgotPasswordForm(FlaskForm):
+    email = StringField('Email', validators=[DataRequired(), Email()], 
+    render_kw={"class": "form-control col-sm-4", "placeholder":"Email"}, )
+    submit = SubmitField('Submit', render_kw={"class":"btn btn-lg btn-light"})
+    
+
 
 class FeedbackForm(FlaskForm):    
     company_name = StringField('Company Name',
@@ -49,35 +59,27 @@ class FeedbackForm(FlaskForm):
     more_comments = StringField('More Comments', 
     render_kw={"class": "form-control col-sm-4", "placeholder":"More comments"} )
     
-    submit = SubmitField('Sumbit Feedback', render_kw={"class":"btn sign-up"})
+    submit = SubmitField('Sumbit Feedback', render_kw={"class":"btn btn-lg btn-dark"})
 
 
 
-class Profile(FlaskForm):    
-    company_name = StringField('Company Name',
-    render_kw={"class": "form-control col-sm-4", "placeholder":"Company Name"})
-    
-    role = StringField('Role',
-    render_kw={"class": "form-control col-sm-4", "placeholder":"Role"})    
-    
-    feedback = TextAreaField('Feedback', validators=[DataRequired()],
-    render_kw={"class": "form-control col-sm-4", "placeholder":"Feedback"})    
-    
-    rating = SelectField('Rating', 
-    choices=[('5', '5 - Excellent'), ('4', '4 - Good'), 
-    ('3', '3 - Fair'), ('2', '2 - Poor'), ('1', '1 - Very Poor')], 
-    default='3', validators=[DataRequired()])
+class ProfileForm(FlaskForm):   
+    first_name = StringField('First Name', validators=[DataRequired(), Length(min=1, max=50)],
+    render_kw={"class": "form-control col-sm-4", "placeholder":"First Name"})
+    last_name = StringField('Last Name', validators=[DataRequired(), Length(min=1, max=50)],
+    render_kw={"class": "form-control col-sm-4", "placeholder":"Last Name"})    
+    username = StringField('Username', validators=[DataRequired(), Regexp('^\S+$'), Length(min=3, max=20)],
+    render_kw={"class": "form-control col-sm-4", "placeholder":"Username"})    
+    email = StringField('Your Email', validators=[DataRequired(), Email()], 
+    render_kw={"class": "form-control col-sm-4", "placeholder":"Email"}, )
+    is_verified = StringField('Email Verified', validators=[DataRequired(), Length(max=8)], 
+    render_kw={"class": "form-control col-sm-4"})
 
-    suggestions = TextAreaField('Suggestions', validators=[DataRequired()], 
-    render_kw={"class": "form-control col-sm-4", "placeholder":"Suggestions"} )
+    reset_password_button = SubmitField('Reset Password', 
+    render_kw={"class":"btn reset-password btn-outline-dark", "value": "Reset Password"})    
     
-    bug_reports = TextAreaField('Bug Reports', 
-    render_kw={"class": "form-control col-sm-4", "placeholder":"Bug reports if any"}, )
-    
-    more_comments = StringField('More Comments', 
-    render_kw={"class": "form-control col-sm-4", "placeholder":"More comments"} )
-    
-    submit = SubmitField('Sumbit Feedback', render_kw={"class":"btn sign-up"})
+    update = SubmitField('Save changes', 
+    render_kw={"class":"btn save-profile btn-lg btn-dark", "value": "Update"})
 
 
 class RecordForm(FlaskForm):    
@@ -148,8 +150,11 @@ class RecordForm(FlaskForm):
     render_kw={"class":"btn sign-up"})
 
 class PasswordResetForm(FlaskForm):
-    password = PasswordField('Password', validators=[DataRequired()], 
-    render_kw={"class": "form-control col-sm-4", "placeholder":"Password"})
-    confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')], 
-    render_kw={"class": "form-control col-sm-4", "placeholder":"Confirm Password"})
-    submit = SubmitField('Reset Password', render_kw={"class":"btn sign-up"})
+    new_password = PasswordField('New Password', [InputRequired(), EqualTo('confirm_password', message='Passwords must match')],
+                                 render_kw={"class": "form-control col-sm-4", "placeholder": "New Password"}, 
+                                 name="new_password")
+    confirm_password = PasswordField('Repeat Password',
+                                     render_kw={"class": "form-control col-sm-4", "placeholder": "Confirm Password"},
+                                     name="confirm_password")
+
+    submit = SubmitField('Reset Password', render_kw={"class": "btn sign-up"})
