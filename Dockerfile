@@ -52,7 +52,7 @@ WORKDIR /app
 # RUN pip install flask_debugtoolbar
 # RUN pip install bleach
 RUN pip install --no-cache-dir -r requirements.txt
-
+RUN ls
 RUN chmod u+rw /logos
 
 # Run the application
