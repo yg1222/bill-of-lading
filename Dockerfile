@@ -53,7 +53,7 @@ WORKDIR /app
 # RUN pip install bleach
 RUN pip install --no-cache-dir -r requirements.txt
 RUN ls
-RUN chmod u+rw /logos
+# RUN chmod u+rw /logos
 
 # Run the application
 #CMD [ "python", "-m", "flask", "run", "--host=0.0.0.0", "--port=5000"]
