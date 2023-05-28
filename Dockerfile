@@ -24,9 +24,9 @@ RUN chmod 755 /logos
 
 
 # Set the working directory for subsequent commands
-WORKDIR /app
-COPY --from=builder . /app
-COPY . /app
+# WORKDIR /app
+# COPY --from=builder . /app
+# COPY . /app
 RUN echo "IN APP DIR"
 RUN ls
 RUN ls -ld
