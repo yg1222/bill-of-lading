@@ -37,18 +37,6 @@ app.register_blueprint(routing_bp)
 UPLOAD_FOLDER = 'logos/'
 
 # Mail configuration
-# app.config["MAIL_SERVER"] = os.environ.get("MAIL_SERVER")
-# app.config["MAIL_PORT"] = 25
-# app.config["MAIL_USE_TLS"] = False
-# app.config["MAIL_USE_SSL"] = True
-# app.config["MAIL_DEBUG"] = app.debug
-# app.config["MAIL_USERNAME"] = os.environ.get("MAIL_USERNAME")
-# app.config["MAIL_PASSWORD"] = os.environ.get("MAIL_PASSWORD")
-# app.config["MAIL_DEFAULT_SENDER"] = os.environ.get("MAIL_DEFAULT_SENDER")
-# app.config["MAIL_MAX_EMAILS"] = None
-# app.config["MAIL_SUPPRESS_SEND"] = app.testing
-# app.config["MAIL_ASCII_ATTACHMENTS"] = False
-# mail = Mail(app)
 app.config['MAIL_SERVER'] = os.environ.get("MAIL_SERVER")
 app.config['MAIL_PORT'] = int(os.environ.get("MAIL_PORT"))
 app.config['MAIL_USE_TLS'] = (os.environ.get("MAIL_USE_TLS")).lower() == 'true'
@@ -106,7 +94,6 @@ def load_user(user_id):
 
   
 #Line below only required once, when creating DB. 
-#db.create_all()
 with app.app_context():    
     #send_email()
     db.create_all()
@@ -120,11 +107,7 @@ def after_request(response):
     response.headers["Expires"] = 0
     response.headers["Pragma"] = "no-cache"
 
-    empty_logos_dir()
-    # TODO: Send mail on after request
-    # msg = Message("You have created a bill of lading pdf", sender="thatkalel@gmail.com",
-    # recipients=["thatkalel@gmail.com"])
-    # mail.send(msg)
+    empty_logos_dir()    
 
     return response
 

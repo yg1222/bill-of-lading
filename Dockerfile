@@ -39,22 +39,13 @@ COPY --from=builder /app /app
 # Set the working directory for subsequent commands
 WORKDIR /app
 
-# Fix ModuleNotFoundError 
-# RUN pip install flask
-# RUN pip install xhtml2pdf
-# RUN pip install flask_login 
-# RUN pip install flask_session
-# RUN pip install flask_sqlalchemy
-# RUN pip install psycopg2-binary
-# RUN pip install flask_wtf
-# RUN pip install email_validator
-# RUN pip install flask_migrate
-# RUN pip install flask_debugtoolbar
-# RUN pip install bleach
 RUN pip install --no-cache-dir -r requirements.txt
 RUN ls
-# RUN chmod u+rw /logos
+RUN pwd
+RUN mkdir logos
+RUN chmod u+rw /logos
 
-# Run the application
+# Run app
 #CMD [ "python", "-m", "flask", "run", "--host=0.0.0.0", "--port=5000"]
-CMD ["flask", "run", "--host=0.0.0.0"]
+# CMD ["flask", "run", "--host=0.0.0.0"]
+CMD ["gunicorn", "wsgi", ":","app"]
