@@ -25,6 +25,7 @@ RUN pip list
 
 RUN if [! -d /session]; then mkdir -p /session; fi
 
+RUN pwd
 RUN ls
 
 # Build the application
