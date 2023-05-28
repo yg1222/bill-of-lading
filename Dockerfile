@@ -43,6 +43,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 RUN ls
 RUN pwd
 RUN mkdir logos
+RUN ls -ld
 RUN chmod u+rw /logos
 
 # Run app
