@@ -18,7 +18,6 @@ RUN pip install --upgrade pip
 ENV PATH="/app/bin:${PATH}"
 
 # Confirming flask is in the right dir
-WORKDIR /app
 COPY . .
 
 RUN pip list
