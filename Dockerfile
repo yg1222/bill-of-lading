@@ -23,7 +23,7 @@ RUN if [ ! -d /session ]; then mkdir -p /session; fi
 RUN pwd
 RUN ls
 RUN mkdir /app/logos
-RUN ls -ld
+RUN ls
 RUN chmod 755 /app/logos
 RUN pip install --no-cache-dir -r requirements.txt
 

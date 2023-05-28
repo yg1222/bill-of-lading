@@ -28,7 +28,7 @@ app = Flask(__name__)
 
 
 
-app.debug = False
+app.debug = True
 app.logger.setLevel(logging.INFO)
 # app.config["TEMPLATES_AUTO_RELOAD"] = True
 app.register_blueprint(routing_bp)
