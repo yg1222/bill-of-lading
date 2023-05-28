@@ -29,7 +29,9 @@ RUN chmod 755 /logos
 # COPY . /app
 RUN echo "IN APP DIR"
 RUN ls
-RUN ls -ld
+RUN ls -ld logos
+RUN pip install gunicorn
+
 
 # Run app
 #CMD [ "python", "-m", "flask", "run", "--host=0.0.0.0", "--port=5000"]
