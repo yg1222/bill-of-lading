@@ -4,6 +4,12 @@ FROM python:3.8-slim-buster AS builder
 # Install build dependencies
 RUN apt-get update && apt-get install -y build-essential
 
+# Copy the source code into the container
+COPY . /app
+
+# Set the working directory for subsequent commands
+WORKDIR /app
+
 # Install dependencies required for building the application
 RUN pip install --upgrade pip 
 
@@ -19,7 +25,7 @@ RUN ls
 RUN mkdir logos
 RUN ls -ld
 RUN chmod 755 /logos
-#RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
 
 
@@ -30,7 +36,6 @@ RUN chmod 755 /logos
 RUN echo "IN APP DIR"
 RUN ls
 RUN ls -ld logos
-RUN pip install gunicorn
 
 
 # Run app
