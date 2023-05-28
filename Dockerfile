@@ -36,7 +36,7 @@ FROM python:3.8-slim-buster
 # Copy the built application from the builder stage
 COPY --from=builder /app /app
 
-RUN pip install --no-cache-dir -r requirements.txt
+
 RUN mkdir logos
 RUN ls -ld
 RUN chmod u+rw /logos
@@ -45,6 +45,7 @@ RUN chmod u+rw /logos
 # Set the working directory for subsequent commands
 WORKDIR /app
 
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Run app
 #CMD [ "python", "-m", "flask", "run", "--host=0.0.0.0", "--port=5000"]
