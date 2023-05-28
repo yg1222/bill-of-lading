@@ -8,7 +8,7 @@ RUN apt-get update && apt-get install -y build-essential
 COPY . /app
 
 # Set the working directory for subsequent commands
-WORKDIR /app
+# WORKDIR /app
 
 # Install dependencies required for building the application
 RUN pip install --upgrade pip 
@@ -38,8 +38,6 @@ FROM python:3.8-slim-buster
 COPY --from=builder /app /app
 
 RUN pip install --no-cache-dir -r requirements.txt
-RUN ls
-RUN pwd
 RUN mkdir logos
 RUN ls -ld
 RUN chmod u+rw /logos
