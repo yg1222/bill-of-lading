@@ -1,9 +1,6 @@
 # Base image for the build stage
 FROM python:3.8-slim-buster AS builder
 
-# Set the working directory for subsequent commands
-WORKDIR /app
-
 # Install build dependencies
 RUN apt-get update && apt-get install -y build-essential
 
@@ -21,8 +18,11 @@ RUN pwd
 RUN ls
 RUN mkdir logos
 RUN ls -ld
-RUN chmod 755 app/logos
+RUN chmod 755 /logos
 #RUN pip install --no-cache-dir -r requirements.txt
+
+# Set the working directory for subsequent commands
+WORKDIR /app
 
 # Run app
 #CMD [ "python", "-m", "flask", "run", "--host=0.0.0.0", "--port=5000"]
