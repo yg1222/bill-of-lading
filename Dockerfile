@@ -28,17 +28,11 @@ RUN chmod 755 /app/logos
 RUN pip install --no-cache-dir -r requirements.txt
 
 
-
-# Set the working directory for subsequent commands
-# WORKDIR /app
-# COPY --from=builder . /app
-# COPY . /app
-RUN echo "IN APP DIR"
-RUN ls
-RUN ls -ld logos
+RUN echo "CONFIRMATION VIEW" && ls -all
 
 
 # Run app
 #CMD [ "python", "-m", "flask", "run", "--host=0.0.0.0", "--port=5000"]
 # CMD ["flask", "run", "--host=0.0.0.0"]
-CMD ["gunicorn", "wsgi", ":","app"]
+# CMD ["gunicorn", "wsgi", ":","app"]
+CMD ["gunicorn", "-w", "4", "wsgi:app"]
