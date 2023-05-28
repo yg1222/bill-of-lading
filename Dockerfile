@@ -21,7 +21,7 @@ RUN pwd
 RUN ls
 RUN mkdir logos
 RUN ls -ld
-RUN chmod 755 /logos
+RUN chmod 755 app/logos
 #RUN pip install --no-cache-dir -r requirements.txt
 
 # Run app
