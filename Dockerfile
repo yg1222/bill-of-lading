@@ -21,13 +21,15 @@ RUN ls -ld
 RUN chmod 755 /logos
 #RUN pip install --no-cache-dir -r requirements.txt
 
-COPY --from=builder . /app
-COPY . /app
+
 
 # Set the working directory for subsequent commands
 WORKDIR /app
+COPY --from=builder . /app
+COPY . /app
 RUN echo "IN APP DIR"
 RUN ls
+RUN ls -ld
 
 # Run app
 #CMD [ "python", "-m", "flask", "run", "--host=0.0.0.0", "--port=5000"]
