@@ -16,4 +16,3 @@ templates/checkout.html
 templates/payment.html
 templates/success.html
 templates/portal.html
-wsgi.py
