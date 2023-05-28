@@ -1,24 +1,21 @@
 # Base image for the build stage
 FROM python:3.8-slim-buster AS builder
 
+# Copy the built application from the builder stage
+COPY --from=builder . /app
+
+# Set the working directory for subsequent commands
+WORKDIR /app
+
 # Install build dependencies
 RUN apt-get update && apt-get install -y build-essential
 
-# Copy the source code into the container
-COPY . /app
-
-# Set the working directory for subsequent commands
-# WORKDIR /app
-
 # Install dependencies required for building the application
 RUN pip install --upgrade pip 
-# RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Explicitly setting path for flask
 ENV PATH="/app/bin:${PATH}"
-
-# Confirming flask is in the right dir
-COPY . .
 
 RUN pip list
 
@@ -27,25 +24,12 @@ RUN if [! -d /session]; then mkdir -p /session; fi
 RUN pwd
 RUN ls
 
-# Build the application
-#RUN python setup.py build
-
-# Second stage of the Dockerfile
-FROM python:3.8-slim-buster
-
-# Copy the built application from the builder stage
-COPY --from=builder /app /app
-
-
 RUN mkdir logos
 RUN ls -ld
-RUN chmod u+rw /logos
-
-
-# Set the working directory for subsequent commands
-WORKDIR /app
+RUN chmod 755 /logos
 
 RUN pip install --no-cache-dir -r requirements.txt
+
 
 # Run app
 #CMD [ "python", "-m", "flask", "run", "--host=0.0.0.0", "--port=5000"]
