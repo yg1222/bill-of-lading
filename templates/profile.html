@@ -18,8 +18,7 @@
     <br>
     <div class="container">
       <div class="row justify-content-center">
-        <div class="col-md-8 mx-auto">
-          
+        <div class="col-md-8 mx-auto">          
           <form action="{{ url_for('routes_r.profile') }}" method="post">
             {{ form.csrf_token }}
             
@@ -40,14 +39,19 @@
               {{ form.is_verified }}  
             </div>
             <div class="form-group">
-              {{ form.reset_password_button }}          
+              {{ form.reset_password_button }}                       
             </div>  
             <br>   
             <div class="form-group">
               {{ form.update }}
             </div>
-        </form>
-          
+        </form>          
+        </div>
+        <div class="mx-auto">
+          <form action="/create-portal-session" method="POST">
+            <input type="hidden" id="session-id" name="session_id" value="" />
+            <button id="checkout-and-portal-button" type="submit">Manage your billing information</button>
+          </form>
         </div>
       </div>
     </div>

@@ -16,46 +16,46 @@ class Person(UserMixin, db.Model):
     updated_at = db.Column(db.DateTime, onupdate=datetime.utcnow)
     password_hash = db.Column(db.String(1000))
     is_verified = db.Column(db.Boolean, default=False)
-    stripe_customer_id = db.Column(db.String(100))  
-    
+    stripe_customer_id = db.Column(db.String(100))    
     def __repr__(self):
-        return '<Person {}>'.format(self.username)
+        return f'<Person {self.username}>'
 
 # Companies table
 class Companies(db.Model):
     id = db.Column(db.Integer,unique=True, primary_key=True)
     company_name = db.Column(db.String(255), nullable=False, unique=True)    
     def __repr__(self):
-        return '<Companies {}>'.format(self.company_name)
+        return f'<Companies {self.company_name}>'
 
 class PersonToCompany(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     person_id = db.Column(db.Integer, db.ForeignKey('person.id'), nullable=False)
     company_id = db.Column(db.Integer, db.ForeignKey('companies.id'), nullable=False)
     def __repr__(self):
-        return '<PersonToCompany {}>'.format(self.id)
+        return f'<PersonToCompany {self.id}>'
 
 class Plan(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    stripe_plan_id = db.Column(db.String(100), unique=True)
     plan_name = db.Column(db.String(100))
-    interval = db.Column(db.Interval)
-    price = db.Column(db.Float)
+    interval = db.Column(db.String)
+    price = db.Column(db.Integer)
     def __repr__(self):
-        return '<Plan {}>'.format(self.id)
+        return f'<Plan {self.stripe_plan_id}>'
 
 
 class Subscription(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    person_id = db.Column(db.Integer, db.ForeignKey('person.id'), nullable=False)
-    plan_id = db.Column(db.Integer, db.ForeignKey('plan.id'), nullable=False)
-    start_date = db.Column(db.DateTime, nullable=False)
-    end_date = db.Column(db.DateTime)
+    stripe_customer_id = db.Column(db.String(100))
+    plan_id = db.Column(db.Integer, db.ForeignKey('plan.id'))
+    start_date = db.Column(db.DateTime)
+    current_period_end = db.Column(db.DateTime)
     status = db.Column(db.String(50))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, onupdate=datetime.utcnow)
-    subscription_id = db.Column(db.String(100))
+    subscription_id = db.Column(db.String(100), unique=True, nullable=False)
     def __repr__(self):
-        return '<Feedback {}>'.format(self.id)
+        return f'<Subscription {self.id}>'
 
 
 class Feedback(db.Model):
@@ -70,7 +70,7 @@ class Feedback(db.Model):
     bug_reports = db.Column(db.Text)
     more_comments = db.Column(db.Text)
     def __repr__(self):
-        return '<Feedback {}>'.format(self.id)
+        return f'<Feedback {self.id}>'
 
 
 class BolDocuments(db.Model):
@@ -96,5 +96,29 @@ class BolDocuments(db.Model):
     comments = db.Column(db.Text)
     is_completed = db.Column(db.Boolean, default=False)
     def __repr__(self):
-        return '<BolDocument {}>'.format(self.id)
+        return f'<BolDocument {self.id}>'
 
+
+# Payment Handling
+# Idempotency Table
+class Idempotent_Request(db.Model):
+    __tablename__ = "idempotent_request"    
+    id = db.Column(db.Integer, primary_key=True)
+    idempotency_key = db.Column(db.String(255))
+    sf_user_id = db.Column(db.Integer, db.ForeignKey('person.id'))    
+    generated_at = db.Column(db.DateTime, default=datetime.utcnow)
+    generated_in = db.Column(db.String(100))
+    generated_by = db.Column(db.String(100))
+    def __repr__(self):
+        return f'<Idempotent_Request {self.idempotency_key}>'
+
+
+# Webhook Table
+class Webhook_Response(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    idempotency_key_id = db.Column(db.Integer, db.ForeignKey('idempotent_request.id'))
+    evt_type = db.Column(db.String(100))
+    evt_id = db.Column(db.String(255))
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+    def __repr__(self):
+        return f'<Webhook_Response {self.evt_id}>'

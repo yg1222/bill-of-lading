@@ -11,15 +11,16 @@ secure_filename, Migrate, uuid, DebugToolbarExtension, clean, \
     Environment, Mail, Message, jsonify, URLSafeTimedSerializer, SignatureExpired, \
         BadTimeSignature
 
-from helpers import login_required, empty_logos_dir, render_sf_load_sheet
+from helpers import login_required, empty_logos_dir, render_sf_load_sheet, \
+    check_sub_status
 from routes import bp as routing_bp
-#from stripe_routes import stripe_bp
+from stripe_routes import stripe_bp
 from models.forms import LoginForm, RegisterForm
 from models.database import db, Person, Companies, PersonToCompany, Feedback, Plan, Subscription, BolDocuments
 #import paypalrestsdk
 import logging
 import json
-#import stripe
+import stripe
 #import creds 
 
 #from sandbox import send_email
@@ -27,12 +28,11 @@ import json
 app = Flask(__name__)
 
 
-
 app.debug = False
 app.logger.setLevel(logging.INFO)
 # app.config["TEMPLATES_AUTO_RELOAD"] = True
 app.register_blueprint(routing_bp)
-#app.register_blueprint(stripe_bp)
+app.register_blueprint(stripe_bp)
 
 UPLOAD_FOLDER = 'logos/'
 
@@ -106,17 +106,18 @@ def after_request(response):
     response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
     response.headers["Expires"] = 0
     response.headers["Pragma"] = "no-cache"
-
-    empty_logos_dir()    
-
+    #empty_logos_dir()    
     return response
+
+
+
+    
 
 
 @app.route("/")
 def index():
-    login_form = LoginForm()  
-    print(current_user)    
-    #print(current_user.stripe_customer_id)
+    print(current_user)  
+    print(check_sub_status())
     return render_template('index.html')
 
 
@@ -124,9 +125,15 @@ def index():
 @login_required
 def subscribe():
     print("Subscribe Request triggered")
-    return ""
-    # return render_template("subscribe.html")
+    return render_template("subscribe.html")
 
+
+@app.route("/success", methods = ['GET', 'POST'])
+@login_required
+def success():
+    print("Success page")
+    #return ""
+    return render_template("success.html")
 
 @app.route("/login", methods = ['GET', 'POST'])
 def login(): 
@@ -214,7 +221,7 @@ def verify_email(verify_token):
     print("BadTimeSignature")
     return "<h2>The url does not match. Try clicking on the link in the email you received.</h2> <h2>If you choose to copy and paste the link, make sure it does not include any spaces.</h2>"
   
-  return url_for('index')
+  return redirect(url_for('index'))
 
 
 @app.route("/register", methods = ['GET', 'POST'])
@@ -302,9 +309,10 @@ def logout():
 @app.route("/form", methods = ['GET', 'POST'])
 @login_required
 def form():
-    print("Request triggered")       
-    if request.method == "POST":  
-          
+    if not check_sub_status() == "active":
+        flash("Hey there! Just a friendly heads-up: your trial period has ended, and your subscription is currently inactive. Don't worry though, you can easily get back in the game by subscribing again to keep the momentum going.", "primary")
+        return render_template("subscribe.html")
+    if request.method == "POST":        
         # Getting values from the form
         your_company_name = clean(str(request.form.get("your_company_name")))    
         your_company_address = clean(str(request.form.get("your_company_address")))

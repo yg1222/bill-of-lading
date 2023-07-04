@@ -8,7 +8,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_debugtoolbar import DebugToolbarExtension
 from flask_mail import Mail, Message
-from sqlalchemy import ForeignKey
+from sqlalchemy import ForeignKey, exc
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 from xhtml2pdf import pisa
@@ -20,6 +20,7 @@ from itsdangerous import URLSafeTimedSerializer, SignatureExpired, \
 import logging
 import io
 import os
+import traceback
 
 from itertools import zip_longest
 from werkzeug.utils import secure_filename

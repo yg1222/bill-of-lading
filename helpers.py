@@ -1,16 +1,16 @@
 from functools import wraps
 from flask_login import current_user
 from flask import redirect, url_for, request
-from models.imports import Environment, io, pisa, send_file
+from models.imports import Environment, io, pisa, send_file, datetime
+from models.database import Subscription
 import os
+import stripe
 
 UPLOAD_FOLDER = 'logos/'
 
 
 print("Helpers imported")
 
-def helpers_test():
-    print("Helpers call test")
 
 def login_required(f):
     @wraps(f)
@@ -36,6 +36,65 @@ def empty_logos_dir():
     except FileNotFoundError:
         print("FileNotFoundError occured - possible empty logos directory")
 
+def is_still_on_trial():
+    if current_user.is_authenticated:
+        current_datetime = datetime.now()
+        join_date = current_user.created_at
+        elapsed_days = (current_datetime - join_date).days
+        print("Elapsed_days")
+        if elapsed_days <= 14:
+            print(f"Elapsed_days -- {elapsed_days}, On Trial")
+            return True
+        else:
+            print(f"Elapsed_days -- {elapsed_days}, Trial Over")            
+            return False
+    else:
+        return None
+
+
+def check_sub_status():
+    if current_user.is_authenticated:
+        if current_user.stripe_customer_id:
+            # Allowint for trial mode
+            if is_still_on_trial() == True:
+                return "active"
+            # Get the curent expiration of this sub cycle
+            subscription = Subscription.query.filter_by(stripe_customer_id=current_user.stripe_customer_id).first()
+            if not subscription:
+                return None
+            subscription_id = subscription.subscription_id
+            subscription_obj = stripe.Subscription.retrieve(subscription_id)
+
+            # Check if we have crossed it
+            current_period_end = datetime.fromtimestamp(subscription_obj.current_period_end)
+            current_datetime = datetime.now()
+            if current_datetime.date() >= current_period_end.date():
+                print("Sub cycle expiry. Making stripe call and updating records") 
+                try:
+                    subscription = Subscription(
+                            plan_id=plan_id,
+                            subscription_id=subscription_id,
+                            status=subscription_obj.status,
+                            stripe_customer_id=stripe_customer_id,
+                            start_date = datetime.fromtimestamp(subscription_obj.start_date),
+                            current_period_end = current_period_end                       
+                        )
+                    db.session.add(subscription)
+                    db.session.commit()
+                    print("Subscription updated in check_sub_status")
+                except Exception as e:
+                        print("Could not update subscription in check_sub_status: ", e)
+                               
+            elif current_datetime.date() <= current_period_end.date():
+                print("Sub end cycle has no approached. Not making stripe call")
+                
+            print(current_user.stripe_customer_id)
+            sub = Subscription.query.filter_by(stripe_customer_id=current_user.stripe_customer_id).first()
+            return sub.status
+        else:
+            return None
+    else:
+        return None
 
 
 def render_sf_load_sheet(bol_html):
