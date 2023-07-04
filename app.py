@@ -170,7 +170,7 @@ def login():
                         print("current_user.id "+ str(current_user.id))
                         flash('Logged in successfully.', "success")
                         print("? user.is_authenticated: " +str(user.is_authenticated))
-                        return render_template("form.html", first_name=first_name)
+                        return render_template("index.html", first_name=first_name)
                     else:
                         # Password mismatch. FLash("Invalid email or password")
                         flash("Invalid email or password", "warning")
@@ -193,7 +193,7 @@ def login():
     else:
         # If method is GET
         if current_user.is_authenticated:
-            return render_template("form.html")
+            return render_template("index.html")
         else:
             return render_template("login.html", form=LoginForm())
 
