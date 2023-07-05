@@ -23,7 +23,6 @@ endpoint_secret = os.environ.get("endpoint_secret")
 
 
 @stripe_bp.route('/create-checkout-session', methods=['POST'])
-@login_required
 def create_checkout_session():
     print("IN create-checkout-session")
     try:
