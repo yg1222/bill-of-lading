@@ -16,13 +16,14 @@ stripe_bp = Blueprint("stripe_r", __name__)
 Base = declarative_base()
 
 # This is your test secret API key.
-YOUR_DOMAIN = "http://shipflow.xyz"
+YOUR_DOMAIN = "https://shipflow.xyz"
 #YOUR_DOMAIN = "http://127.0.0.1:5000"
 stripe.api_key = os.environ.get("stripe_api_key")
 endpoint_secret = os.environ.get("endpoint_secret")
 
 
 @stripe_bp.route('/create-checkout-session', methods=['POST'])
+@login_required
 def create_checkout_session():
     print("IN create-checkout-session")
     try:
@@ -111,7 +112,6 @@ def customer_portal():
 
 # ----- WEBHOOKS
 @stripe_bp.route('/stripe_webhooks', methods=['POST'])
-@login_required
 def webhook():
     print("Webhook Triggered")
     event = None
