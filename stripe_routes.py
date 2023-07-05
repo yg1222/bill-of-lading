@@ -16,7 +16,7 @@ stripe_bp = Blueprint("stripe_r", __name__)
 Base = declarative_base()
 
 # This is your test secret API key.
-YOUR_DOMAIN = "https://shipflow.xyz"
+YOUR_DOMAIN = "http://shipflow.xyz"
 #YOUR_DOMAIN = "http://127.0.0.1:5000"
 stripe.api_key = os.environ.get("stripe_api_key")
 endpoint_secret = os.environ.get("endpoint_secret")
