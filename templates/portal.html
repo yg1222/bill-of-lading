@@ -1,0 +1,98 @@
+{% extends "layout.html" %}
+{% block content %}
+<br>
+
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-md-8 mx-auto">
+          <div class="card">
+            <div class="card-body text-center">
+              <h2>Portal Dashboard</h2>
+              <p class="lead">Manage your portal.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <br>
+    <div class="container">
+      
+        <div class="host-div ">
+          
+              {% for host_form in host_forms %}
+              <div> Host Records
+                <form action="{{ url_for('routes_r.portal') }}" method="post">
+                  {{ host_form.csrf_token }}                  
+                    {{ host_form.hidden_tag() }}                  
+
+                    {{ host_form.id}} 
+                    {{ host_form.host_id}}
+                    {{ host_form.guest_id}}
+                    {{ host_form.broker_company_name}} 
+                    {{ host_form.broker_company_address}}
+                    {{ host_form.broker_company_phone}}
+                    {{ host_form.dispatcher_name}} 
+                    {{ host_form.dispatcher_email}}
+                    {{ host_form.dispatcher_phone}}
+                    {{ host_form.carrier_company_name}} 
+                    {{ host_form.equipment_details}}
+                    {{ host_form.bill_to}}
+                    {{ host_form.po_number}} 
+                    {{ host_form.dock_number}}
+                    {{ host_form.rate}}
+                    {{ host_form.run_date}} 
+                    {{ host_form.pickup_delivery_details}}
+                    {{ host_form.comments}}
+                    {{ host_form.created_at}} 
+                    {{ host_form.updated_at}}
+                    <label>Is completed</label>
+                    {{ host_form.is_completed}}<br>
+                    <button type="submit">Update</button>
+                </form>
+              </div>
+              {% endfor %}
+        </div>
+        <div class="host-div col-md-8 mx-auto">
+          
+          {% for guest_form in guest_forms %}
+          <div> Guest Records
+            <form action="{{ url_for('routes_r.portal') }}" method="post">
+              {{ guest_form.csrf_token }}                  
+                {{ guest_form.hidden_tag() }}                  
+
+                {{ guest_form.record_id}} 
+                {{ guest_form.host_id}}
+                {{ guest_form.guest_id}}
+                {{ guest_form.broker_company_name}} 
+                {{ guest_form.broker_company_address}}
+                {{ guest_form.broker_company_phone}}
+                {{ guest_form.dispatcher_name}} 
+                {{ guest_form.dispatcher_email}}
+                {{ guest_form.dispatcher_phone}}
+                {{ guest_form.carrier_company_name}} 
+                {{ guest_form.equipment_details}}
+                {{ guest_form.bill_to}}
+                {{ guest_form.po_number}} 
+                {{ guest_form.dock_number}}
+                {{ guest_form.rate}}
+                {{ guest_form.run_date}} 
+                {{ guest_form.pickup_delivery_details}}
+                {{ guest_form.comments}}
+                {{ guest_form.created_at}} 
+                {{ guest_form.updated_at}}
+                {{ guest_form.is_completed}}
+                <button type="submit">Update</button>
+            </form>
+          </div>
+          {% endfor %}
+    </div>
+
+      
+    
+
+</div>
+
+
+
+
+{% endblock %}

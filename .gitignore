@@ -11,8 +11,3 @@ flask_session/
 session/
 migrations/
 .vscode/
-templates/cancel.html
-templates/checkout.html
-templates/payment.html
-templates/success.html
-templates/portal.html
