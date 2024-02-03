@@ -61,10 +61,6 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # Initializing serializer
 s = URLSafeTimedSerializer(app.config['SECRET_KEY'])
 
-# Print Inspetion of rquest headers
-app.before_request(lambda: print(f"Request Headers Inspection: {request.headers}"))
-
-
 
 # Bind the db object from databse.py to this Flask application
 db.init_app(app)
@@ -92,6 +88,16 @@ for rule in app.url_map.iter_rules():
 # app.config["USE_SESSION_FOR_NEXT"] = True
 # Session(app)
 
+# Header inspection
+@app.before_request
+def log_request_ip():
+    client_ip = request.headers.get('X-Forwarded-For', request.remote_addr)
+    # app.logger.info(f"Request from IP: {client_ip}")
+    if current_user:
+        print(f"Request user {current_user.email}, from IP: {client_ip}, at {request.url}")
+    else:
+        print(f"Request from IP: {client_ip}")
+    
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -143,13 +149,15 @@ def success():
 @app.route("/login", methods = ['GET', 'POST'])
 def login(): 
     login_form = LoginForm() 
-    if request.method == "POST":       
+    if request.method == "POST":  
+        user_ip = request.headers.get('X-Forwarded-For')     
         if login_form.validate_on_submit():
             if login_form.login.data:
                 email = request.form.get("email")
                 password = request.form.get("password")
-                print("Login query \u2193 \n"+request.remote_addr + " - " + 
-                str(datetime.now()) + " \u2193 \n"+  email)
+                # print("Login query \u2193 \n"+request.remote_addr + " - " + 
+                # str(datetime.now()) + " \u2193 \n"+  email)
+                print(f"Login query \u2193 \n{email} - {user_ip} - {str(datetime.now())}")
             
                 #check_password_hash(pwhash, password) 
                 # where pwhash == hash in db, password == arguement password, returns true if matched
