@@ -61,6 +61,11 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # Initializing serializer
 s = URLSafeTimedSerializer(app.config['SECRET_KEY'])
 
+# Print Inspetion of rquest headers
+app.before_request(lambda: print(f"Request Headers Inspection: {request.headers}"))
+
+
+
 # Bind the db object from databse.py to this Flask application
 db.init_app(app)
 migrate = Migrate(app, db)
