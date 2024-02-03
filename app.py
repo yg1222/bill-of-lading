@@ -93,7 +93,7 @@ for rule in app.url_map.iter_rules():
 def log_request_ip():
     client_ip = request.headers.get('X-Forwarded-For', request.remote_addr)
     # app.logger.info(f"Request from IP: {client_ip}")
-    if current_user:
+    if current_user.is_authenticated:
         print(f"Request user {current_user.email}, from IP: {client_ip}, at {request.url}")
     else:
         print(f"Request from IP: {client_ip}")
