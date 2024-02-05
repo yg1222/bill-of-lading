@@ -239,6 +239,7 @@ def verify_email(verify_token):
 
 @app.route("/register", methods = ['GET', 'POST'])
 def register():
+    return "<h1>Temporarily Unavailable</h1>"
     register_form = RegisterForm()
     if request.method == "POST":
         if register_form.validate_on_submit():
