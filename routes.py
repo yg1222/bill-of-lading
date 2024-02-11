@@ -5,7 +5,7 @@ from helpers import login_required
 from models.imports import Blueprint, render_template, request, redirect, current_app, \
     current_user, URLSafeTimedSerializer, SignatureExpired, \
         BadTimeSignature, BadSignature, url_for, flash, Message, Mail, generate_password_hash
-from models.database import db, Companies, Feedback, BolDocuments, Person
+from models.database import db, Companies, Feedback, BolDocuments, Users
 
 
 bp = Blueprint("routes_r", __name__)
@@ -92,7 +92,7 @@ def error(error_type):
 def profile():
     from models.forms import ProfileForm, PasswordResetForm
     if current_user.is_authenticated:
-        profile = Person.query.filter_by(id=current_user.id).first() 
+        profile = Users.query.filter_by(id=current_user.id).first() 
         profile_form = ProfileForm(obj=profile)
 
         if profile_form.validate_on_submit(): 
@@ -149,8 +149,8 @@ def reset_password(reset_token):
                     print(reset_type)            
             
             # Verify the user with "email" as their email in the Database  
-            if Person.query.filter_by(email=check_email).count() == 1:
-                update_user = Person.query.filter_by(email=check_email).first()
+            if Users.query.filter_by(email=check_email).count() == 1:
+                update_user = Users.query.filter_by(email=check_email).first()
                 print("found password change user in db. checking if it matches current user")
                 if reset_type == "change-password":
                     if current_user == update_user:
@@ -210,7 +210,7 @@ def forgot_password():
     if forgot_password_form.validate_on_submit():
         email = request.form.get("email")
         # If the email is in our database
-        if Person.query.filter_by(email=email).count() == 1:            
+        if Users.query.filter_by(email=email).count() == 1:            
             reset_token = s.dumps(email, salt='forgot-password')
             reset_link = url_for('routes_r.reset_password', reset_token=reset_token, _external=True)
             print("reset_link: "+ str(reset_link))

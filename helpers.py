@@ -2,7 +2,7 @@ from functools import wraps
 from flask_login import current_user
 from flask import redirect, url_for, request
 from models.imports import Environment, io, pisa, send_file, datetime
-from models.database import Subscription
+from models.database import Subscriptions
 import os
 import stripe
 
@@ -59,7 +59,7 @@ def check_sub_status():
             if is_still_on_trial() == True:
                 return "active"
             # Get the curent expiration of this sub cycle
-            subscription = Subscription.query.filter_by(stripe_customer_id=current_user.stripe_customer_id).first()
+            subscription = Subscriptions.query.filter_by(stripe_customer_id=current_user.stripe_customer_id).first()
             if not subscription:
                 return None
             subscription_id = subscription.subscription_id
@@ -89,7 +89,7 @@ def check_sub_status():
                 print("Sub end cycle has no approached. Not making stripe call")
                 
             print(current_user.stripe_customer_id)
-            sub = Subscription.query.filter_by(stripe_customer_id=current_user.stripe_customer_id).first()
+            sub = Subscriptions.query.filter_by(stripe_customer_id=current_user.stripe_customer_id).first()
             return sub.status
         else:
             return None

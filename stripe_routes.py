@@ -8,8 +8,8 @@ generate_password_hash, check_password_hash, FlaskForm, StringField, \
 PasswordField, SubmitField, DataRequired, Regexp, Email, Length, \
 secure_filename, Migrate, uuid, DebugToolbarExtension, clean, \
     Environment, Mail, Message, jsonify, exc, traceback, declarative_base
-from models.database import db, Person, Companies, PersonToCompany, Feedback, \
-     Plan, Subscription, Idempotent_Request, Webhook_Response
+from models.database import db, Users, Companies, Feedback, \
+     Plans, Subscriptions, IdempotentRequests, WebhookResponses
 
 stripe_bp = Blueprint("stripe_r", __name__)
 
@@ -43,7 +43,7 @@ def create_checkout_session():
             current_user.stripe_customer_id = stripe_customer_id
 
             # Create idempotency table entry
-            add_idp_key = Idempotent_Request(
+            add_idp_key = IdempotentRequests(
                 idempotency_key=idempotency_key,
                 sf_user_id=current_user.id,
                 generated_in="create-checkout-session",
@@ -143,7 +143,7 @@ def webhook():
         try:
             # Check the idp table for this idempotency_key into idempotency_key_id
             print(f"is_idempotent() {event_type},  idempotency_key: {str(idempotency_key)}")
-            idempotency_obj = Idempotent_Request.query.filter_by(idempotency_key=idempotency_key).first()
+            idempotency_obj = IdempotentRequests.query.filter_by(idempotency_key=idempotency_key).first()
             
             if idempotency_obj:
                 idempotency_key_id = idempotency_obj.id
@@ -152,7 +152,7 @@ def webhook():
                 print("No idempotency_key recorded. Therefore is idempotent. Return True")
                 return True
             # Check webhook table for a previous recorded occurence of the current event
-            pre_recorded_webhook = Webhook_Response.query.filter_by(idempotency_key_id=idempotency_key_id, evt_type=event_type).all()
+            pre_recorded_webhook = WebhookResponses.query.filter_by(idempotency_key_id=idempotency_key_id, evt_type=event_type).all()
         except Exception as e:
             # This should mean there is no current. Is idempotent
             print("Raised exception working with idempotency_key_id and/or pre_recorded_webhook indicating no previous recording of this idempotency key.  Returning True for is_idempotent")
@@ -176,7 +176,7 @@ def webhook():
             print(metadata)
             print('🔔 Payment succeeded!')
             # Create the record for first time occurence webhook table            
-            add_wh_record = Webhook_Response(
+            add_wh_record = WebhookResponses(
                 idempotency_key_id=idempotency_key_id,
                 evt_type=event_type,
                 evt_id=event_id
@@ -193,7 +193,7 @@ def webhook():
             # print(event)
             print('Customer charge.failed')
             # Create the record for first time occurence webhook table            
-            add_wh_record = Webhook_Response(
+            add_wh_record = WebhookResponses(
                 idempotency_key_id=idempotency_key_id,
                 evt_type=event_type,
                 evt_id=event_id
@@ -211,7 +211,7 @@ def webhook():
             # print(event)
             print('Customer charge.succeeded')
             # Create the record for first time occurence webhook table            
-            add_wh_record = Webhook_Response(
+            add_wh_record = WebhookResponses(
                 idempotency_key_id=idempotency_key_id,
                 evt_type=event_type,
                 evt_id=event_id
@@ -234,7 +234,7 @@ def webhook():
             sf_user_id = int(event.data.object.metadata.get("sf_user_id"))
             print("customer created metadata: "+ str(sf_user_id))
             if sf_user_id:
-                sf_user = Person.query.get(sf_user_id)
+                sf_user = Users.query.get(sf_user_id)
                 if sf_user:
                     print("Found corresponding user in customer created hook " +
                         str(sf_user))
@@ -253,7 +253,7 @@ def webhook():
                 print("**** In customer created hook, did not get sf_user_metadata")
             
             # Create the record for first time occurence webhook table            
-            add_wh_record = Webhook_Response(
+            add_wh_record = WebhookResponses(
                 idempotency_key_id=idempotency_key_id,
                 evt_type=event_type,
                 evt_id=event_id
@@ -270,7 +270,7 @@ def webhook():
         if is_idempotent() == True:
             stripe_customer_id = event.data.object.id
             
-            sf_user = Person.query.filter_by(stripe_customer_id=stripe_customer_id).first()
+            sf_user = Users.query.filter_by(stripe_customer_id=stripe_customer_id).first()
 
             if sf_user:
                 print("Found corresponding user in customer deleted hook " +
@@ -283,7 +283,7 @@ def webhook():
                 print("*** Did not find the customer to delete")
             
             # Create the record for first time occurence webhook table            
-            add_wh_record = Webhook_Response(
+            add_wh_record = WebhookResponses(
                 idempotency_key_id=idempotency_key_id,
                 evt_type=event_type,
                 evt_id=event_id
@@ -308,7 +308,7 @@ def webhook():
                 print("Event Type: " + event_type)
                 # print("Printing event")
                 # print(event)
-                plan = Plan.query.filter_by(stripe_plan_id = stripe_plan_id).first()
+                plan = Plans.query.filter_by(stripe_plan_id = stripe_plan_id).first()
                 plan_id=None
                 print("plan id init: ",plan_id)
                 # Making sure to populate our plan table
@@ -331,13 +331,13 @@ def webhook():
                     except Exception as e:
                         print("Error adding plan:", e)
                         db.session.rollback()
-                    plan = Plan.query.filter_by(stripe_plan_id=stripe_plan_id).first()
+                    plan = Plans.query.filter_by(stripe_plan_id=stripe_plan_id).first()
                     plan_id = plan.id
                 print("To use in create plan id: ",plan_id)
                 
                 # Populate the subscription table
                 print("subscription_obj.start_date ->  ", str(subscription_obj.start_date))
-                subscription = Subscription.query.filter_by(subscription_id=subscription_id).first()
+                subscription = Subscriptions.query.filter_by(subscription_id=subscription_id).first()
                 print("subscription check before creating in create evt")
                 print(subscription)
                 if not subscription:
@@ -363,7 +363,7 @@ def webhook():
                 print("****Error updating subscription created: ", e)
             
             # Create the record for first time occurence webhook table            
-            add_wh_record = Webhook_Response(
+            add_wh_record = WebhookResponses(
                 idempotency_key_id=idempotency_key_id,
                 evt_type=event_type,
                 evt_id=event_id
@@ -388,7 +388,7 @@ def webhook():
                 # print(event)
                 
                 print("stripe_customer_id in subsc updated " + stripe_customer_id)
-                plan = Plan.query.filter_by(stripe_plan_id = stripe_plan_id).first()
+                plan = Plans.query.filter_by(stripe_plan_id = stripe_plan_id).first()
                 print(plan)
                 plan_id=None
                 print("plan id init: ",plan_id)
@@ -412,7 +412,7 @@ def webhook():
                     except Exception as e:
                         print("Error adding plan:", e)
                         db.session.rollback()
-                    plan = Plan.query.filter_by(stripe_plan_id = stripe_plan_id).first()
+                    plan = Plans.query.filter_by(stripe_plan_id = stripe_plan_id).first()
                     plan_id = plan.id
                     print(plan_id)
                 
@@ -423,7 +423,7 @@ def webhook():
                 print("subscription_obj.status ->  ", str(subscription_obj.status))
                 
                 
-                subscription = Subscription.query.filter_by(subscription_id=subscription_id).first()
+                subscription = Subscriptions.query.filter_by(subscription_id=subscription_id).first()
                 print("subscription check before creating in update evt")
                 print(subscription)
                 if not subscription:
@@ -459,7 +459,7 @@ def webhook():
                 print("**** Error updating subscription updated: ", e)
             
             # Create the record for first time occurence webhook table            
-            add_wh_record = Webhook_Response(
+            add_wh_record = WebhookResponses(
                 idempotency_key_id=idempotency_key_id,
                 evt_type=event_type,
                 evt_id=event_id
@@ -469,7 +469,7 @@ def webhook():
         else:
             print("***Non idempotent block --- "+ event_type)
             # Other situations where the subscription is just updated by itself
-            subscription = Subscription.query.filter_by(subscription_id=subscription_id).first()
+            subscription = Subscriptions.query.filter_by(subscription_id=subscription_id).first()
             if subscription:
                 subscription.status = subscription_obj.status
                 db.session.add(subscription)
@@ -480,7 +480,7 @@ def webhook():
         try:
             subscription_id = event.data.object.id
             print("Event Type: " + event_type)                                
-            subscription = Subscription.query.filter_by(subscription_id=subscription_id).first()                
+            subscription = Subscriptions.query.filter_by(subscription_id=subscription_id).first()                
             print(f"in sub deleting, updating db status to {subscription_obj.status}: {str(subscription)}")
             subscription.status = subscription_obj.status
             db.session.add(subscription)
@@ -492,7 +492,7 @@ def webhook():
             print("**** Error updating subscription: deleted ", e)
         
         # Create the record for first time occurence webhook table            
-        add_wh_record = Webhook_Response(
+        add_wh_record = WebhookResponses(
             idempotency_key_id=idempotency_key_id,
             evt_type=event_type,
             evt_id=event_id
@@ -507,7 +507,7 @@ def webhook():
             subscription_obj = event.data.object
             subscription_id = event.data.object.id
             print("Event Type: " + event_type)                    
-            subscription = Subscription.query.filter_by(
+            subscription = Subscriptions.query.filter_by(
                 subscription_id=subscription_id).first()
             print(f"in sub paused, updating db status to {subscription_obj.status}: {str(subscription)}")
             subscription.status = subscription_obj.status
@@ -517,7 +517,7 @@ def webhook():
             print("**** Error updating subscription paused: ", e)
 
         # Create the record for first time occurence webhook table            
-        add_wh_record = Webhook_Response(
+        add_wh_record = WebhookResponses(
             idempotency_key_id=idempotency_key_id,
             evt_type=event_type,
             evt_id=event_id
@@ -532,7 +532,7 @@ def webhook():
             subscription_id = event.data.object.id
             print("Event Type: " + event_type)
                         
-            subscription = Subscription.query.filter_by(subscription_id=subscription_id).first()
+            subscription = Subscriptions.query.filter_by(subscription_id=subscription_id).first()
             print(f"in sub resumed, updating db status to {subscription_obj.status}: {str(subscription)}")
             subscription.status = subscription_obj.status
             db.session.add(subscription)
@@ -541,7 +541,7 @@ def webhook():
             print("**** Error updating subscription resumed: ", e) 
 
         # Create the record for first time occurence webhook table            
-        add_wh_record = Webhook_Response(
+        add_wh_record = WebhookResponses(
             idempotency_key_id=idempotency_key_id,
             evt_type=event_type,
             evt_id=event_id
@@ -556,7 +556,7 @@ def webhook():
         if is_idempotent() == True:
             print("TODO: handle invoice event: "+ event_type)
             # Create the record for first time occurence webhook table            
-            add_wh_record = Webhook_Response(
+            add_wh_record = WebhookResponses(
                 idempotency_key_id=idempotency_key_id,
                 evt_type=event_type,
                 evt_id=event_id
@@ -572,7 +572,7 @@ def webhook():
         if is_idempotent() == True:
             print("TODO: handle invoice event: "+ event_type)
             # Create the record for first time occurence webhook table            
-            add_wh_record = Webhook_Response(
+            add_wh_record = WebhookResponses(
                 idempotency_key_id=idempotency_key_id,
                 evt_type=event_type,
                 evt_id=event_id
@@ -588,7 +588,7 @@ def webhook():
         if is_idempotent() == True:
             print("TODO: handle invoice event: "+ event_type)
             # Create the record for first time occurence webhook table            
-            add_wh_record = Webhook_Response(
+            add_wh_record = WebhookResponses(
                 idempotency_key_id=idempotency_key_id,
                 evt_type=event_type,
                 evt_id=event_id

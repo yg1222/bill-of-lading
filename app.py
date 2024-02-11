@@ -16,7 +16,7 @@ from helpers import login_required, empty_logos_dir, render_sf_load_sheet, \
 from routes import bp as routing_bp
 from stripe_routes import stripe_bp
 from models.forms import LoginForm, RegisterForm
-from models.database import db, Person, Companies, PersonToCompany, Feedback, Plan, Subscription, BolDocuments
+from models.database import db, Users, Companies, Feedback, Plans, Subscriptions, BolDocuments
 #import paypalrestsdk
 import logging
 import json
@@ -101,7 +101,7 @@ def log_request_ip():
 
 @login_manager.user_loader
 def load_user(user_id):
-    return Person.query.get(int(user_id))
+    return Users.query.get(int(user_id))
 
   
 #Line below only required once, when creating DB. 
@@ -161,9 +161,9 @@ def login():
             
                 #check_password_hash(pwhash, password) 
                 # where pwhash == hash in db, password == arguement password, returns true if matched
-                if Person.query.filter_by(email=email).count() == 1:
-                    user = Person.query.filter_by(email=email).first()
-                    #print(Person.query.all())
+                if Users.query.filter_by(email=email).count() == 1:
+                    user = Users.query.filter_by(email=email).first()
+                    #print(Users.query.all())
                 else:
                     user = None
 
@@ -216,8 +216,8 @@ def verify_email(verify_token):
   try:    
     email = s.loads(verify_token, salt='verify-email', max_age=300)
     # Verify the user with "email" as their email in the Database  
-    if Person.query.filter_by(email=email).count() == 1:
-        user_to_verify = Person.query.filter_by(email=email).first()
+    if Users.query.filter_by(email=email).count() == 1:
+        user_to_verify = Users.query.filter_by(email=email).first()
         print("found verification email in db. checking if it matches current user")
         print("matches current user") # Note if they use a different browser, it won't match. Consider not matching. Lookup best practices
         # Update db
@@ -259,13 +259,13 @@ def register():
             
             # Checking database before registering
             # If user already exists
-            if Person.query.filter_by(email=email).count() >0:
+            if Users.query.filter_by(email=email).count() >0:
                 print(first_name + " already exists")
                 flash("Oops! "+ email + " already exists. If this is you, please log in.", "warning")            
                 return render_template("register.html",form=register_form)
             # If new user. Registering
-            elif Person.query.filter_by(email=email).count() == 0:
-                print(Person.query.filter_by(email=email).count())
+            elif Users.query.filter_by(email=email).count() == 0:
+                print(Users.query.filter_by(email=email).count())
                 flash("Welcome, " +first_name + ". You've signed up successfully. We've sent you an email. Please verify your email.", "success")
                 print(first_name + " did not exist. Registering user")
                 db.session.add(person_update)
@@ -435,59 +435,15 @@ def form():
         print("pickup_delivery_details ↓")
         print(pickup_delivery_details)
 
-        # Create document in DB
-       
-        
 
-        is_sharing = False
-        
-        # TODO: 
-        # if sharing:
-            # ask for guest's email
-            # search db for guest to get guest_id            
-            # warn host about privacy and search db for email and
-            # save to database with host_id and guest_id
-            
-            # send email to the guest
-            # when guest opens, a form is recreated and updates the record when done
-            # same thing happens with the host until host marks the record as complete
-           
+        bol_html =  render_template("bill_of_lading.html", your_company_name=your_company_name,logo_path=logo_path,your_company_phone=your_company_phone, your_company_address=your_company_address, 
+                            dispatcher_name=dispatcher_name,dispatcher_email=dispatcher_email,dispatcher_phone=dispatcher_phone,
+                            run_date=run_date,dock=dock,carrier=carrier,bill_to=bill_to,rate=rate,equipment_details=equipment_details,
+                            pickup_delivery_details=pickup_delivery_details,comments=comments_formatted,po_number=po_number,
+                            logo_ext=logo_ext,logo_size=logo_size)
 
-        # else:
-            # render pdf as usual
-
-        if request.form['action'] == "share":  
-            guest_email = clean(str(request.form.get("guest_email")))
-            print(guest_email)
-
-            guest = Person.query.filter_by(email=guest_email).first()
-            print("Guest -->  "+ str(guest))
-
-            if guest:
-                session_document = BolDocuments(host_id=current_user.id,guest_id=guest.id,broker_company_name=your_company_name,
-                    broker_company_address=your_company_address,broker_company_phone=your_company_phone,
-                    dispatcher_name=dispatcher_name,dispatcher_email=dispatcher_email,dispatcher_phone=dispatcher_phone,
-                    carrier_company_name=carrier,equipment_details=equipment_details,bill_to=bill_to,po_number=po_number,
-                    dock_number=dock,rate=rate,run_date=run_date,pickup_delivery_details=json.dumps(pickup_delivery_details),
-                    comments=json.dumps(comments_formatted))
-
-                db.session.add(session_document)
-                db.session.commit()
-                print(session_document.id) # works, returns the record object
-                return "Should redirect to your portal page" # redirect to portal
-
-            else:
-                return "Unable to find the user with this email. Please check for spelling mistakes and verify with the user."
-
-        else:        
-            bol_html =  render_template("bill_of_lading.html", your_company_name=your_company_name,logo_path=logo_path,your_company_phone=your_company_phone, your_company_address=your_company_address, 
-                                dispatcher_name=dispatcher_name,dispatcher_email=dispatcher_email,dispatcher_phone=dispatcher_phone,
-                                run_date=run_date,dock=dock,carrier=carrier,bill_to=bill_to,rate=rate,equipment_details=equipment_details,
-                                pickup_delivery_details=pickup_delivery_details,comments=comments_formatted,po_number=po_number,
-                                logo_ext=logo_ext,logo_size=logo_size)
-
-            sf_load_sheet = render_sf_load_sheet(bol_html)
-            return sf_load_sheet
+        sf_load_sheet = render_sf_load_sheet(bol_html)
+        return sf_load_sheet
 
 
     elif request.method == "GET":
