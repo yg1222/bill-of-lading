@@ -172,22 +172,3 @@ class AuditTrail(db.Model):
     def __repr__(self):
         return f'<AuditTrail {self.id}-{self.action}>'
 
-
-# Courier reports
-class Jobs(db.Model):
-    __tablename__ = 'jobs'
-    id = db.Column(db.Integer, primary_key=True)
-    owner = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    job_id = db.Column(db.Integer)
-    job_date = db.Column(db.Date, nullable=False)
-    job_details = db.Column(db.String)
-    courier_id = db.Column(db.Integer, db.ForeignKey('courier.id'), nullable=False)
-    pay_amount = db.Column(db.Float, default=0.0)  
-
-class Couriers(db.Model):
-    __tablename__ = 'couriers'
-    id = db.Column(db.Integer, primary_key=True)
-    owner = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    name = db.Column(db.String(50), nullable=False)
-    email = db.Column(db.String(80))
-    phone = db.Column(db.String(20))
