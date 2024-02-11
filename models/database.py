@@ -33,7 +33,7 @@ class Users(UserMixin, db.Model):
     is_verified = db.Column(db.Boolean, default=False)
     stripe_customer_id = db.Column(db.String(100))    
     user_settings = db.Column(JSON)
-    organization = db.Column(db.Integer, db.ForeignKey('organizations.id', name='fk_user_org'))
+    orginization = db.Column(db.Integer, db.ForeignKey('organizations.id', name='fk_user_org'))
     def __repr__(self):
         return f'<User {self.username}>'
 
